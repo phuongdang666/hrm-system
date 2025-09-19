@@ -23,7 +23,7 @@ export default function Modal({
             onClose();
         }
     };
-
+    // Prevent scrolling when modal is open
     useEffect(() => {
         if (show) {
             document.body.style.overflow = 'hidden';
