@@ -125,39 +125,23 @@ export default function DepartmentManage({ departments = { data: [] }, employees
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
-                Thêm phòng ban mới
+                Add new department
             </Button>
 
             <Card className="bg-white shadow-lg border-0 rounded-xl overflow-hidden">
-                {/* <CardHeader className="flex items-center justify-between bg-[#f8f9fa] border-b border-gray-200 p-6">
-                    <div>
-                        <CardTitle className="text-2xl font-bold text-gray-800">Quản lý phòng ban</CardTitle>
-                        <p className="text-gray-600 mt-1">Quản lý các phòng ban và nhân viên trong tổ chức</p>
-                    </div>
-                    <Button
-                        onClick={() => setShowCreateModal(true)}
-                        className="bg-blue-600 text-white hover:bg-blue-700 transition-colors flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        Thêm phòng ban mới
-                    </Button>
-                </CardHeader> */}
                 <CardContent>
                     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
                         <Table>
                             <TableHeader>
                                 <TableRow className="bg-[#f8f9fa] border-b border-gray-200">
                                     <TableCell isHeader className="py-4 px-6 text-sm font-bold text-gray-800">
-                                        Tên phòng ban
+                                        Name
                                     </TableCell>
                                     <TableCell isHeader className="py-4 px-6 text-sm font-bold text-gray-800">
-                                        Quản lý
+                                        Manager
                                     </TableCell>
                                     <TableCell isHeader className="py-4 px-6 text-sm font-bold text-gray-800">
-                                        Số nhân viên
+                                        Number of Employees
                                     </TableCell>
                                     <TableCell isHeader className="py-4 px-6 text-sm font-bold text-gray-800 text-right">
                                         Actions
@@ -177,9 +161,9 @@ export default function DepartmentManage({ departments = { data: [] }, employees
                                                         />
                                                     </svg>
                                                 </div>
-                                                <h3 className="text-xl font-semibold text-gray-900 mb-2">Chưa có phòng ban nào</h3>
+                                                <h3 className="text-xl font-semibold text-gray-900 mb-2">None department</h3>
                                                 <p className="text-sm text-gray-500 max-w-sm mb-6">
-                                                    Bạn chưa tạo phòng ban nào. Hãy tạo phòng ban đầu tiên để bắt đầu quản lý tổ chức của bạn.
+                                                    Please create a department to start managing your organization.
                                                 </p>
                                                 <Button
                                                     onClick={() => setShowCreateModal(true)}
@@ -189,7 +173,7 @@ export default function DepartmentManage({ departments = { data: [] }, employees
                                                         <line x1="12" y1="5" x2="12" y2="19"></line>
                                                         <line x1="5" y1="12" x2="19" y2="12"></line>
                                                     </svg>
-                                                    Tạo phòng ban mới
+                                                    Add new department
                                                 </Button>
                                             </div>
                                         </td>
@@ -218,11 +202,11 @@ export default function DepartmentManage({ departments = { data: [] }, employees
                                                     </div>
                                                     <div>
                                                         <div className="font-medium text-gray-900">{dept.manager.name}</div>
-                                                        <div className="text-sm text-gray-500">Quản lý phòng ban</div>
+                                                        <div className="text-sm text-gray-500">Manager</div>
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <span className="text-gray-400 italic">Chưa có quản lý</span>
+                                                <span className="text-gray-400 italic">No manager</span>
                                             )}
                                         </TableCell>
                                         <TableCell className="py-4 px-6">
@@ -233,7 +217,7 @@ export default function DepartmentManage({ departments = { data: [] }, employees
                                                     <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                                                     <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                                 </svg>
-                                                <span>{dept.employees?.length || 0} nhân viên</span>
+                                                <span>{dept.employees?.length || 0} employees</span>
                                             </div>
                                         </TableCell>
                                         <TableCell>

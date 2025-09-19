@@ -44,11 +44,8 @@ Route::prefix('admin')->middleware(['auth.admin'])->group(function () {
     Route::delete('departments/{department}/employees/{employee}', [DepartmentController::class, 'removeEmployee'])
         ->name('admin.departments.remove-employee');
 
-    Route::get('attendances', [AttendanceController::class, 'index'])->name('admin.attendances.index');
-    Route::post('attendances/{id}', [AttendanceController::class, 'update'])->name('admin.attendances.update');
-    Route::get('attendances-export/csv', [AttendanceController::class, 'exportCsv'])->name('admin.attendances.export.csv');
-    Route::get('attendances-export/pdf', [AttendanceController::class, 'exportPdf'])->name('admin.attendances.export.pdf');
-    Route::resource('announcements', AnnouncementController::class)->names('admin.announcements');
+    // Attendance routes
+    Route::resource('attendances', AttendanceController::class)->only(['index', 'update'])->names('admin.attendances');
 });
 
 Route::prefix('employee')->middleware(['auth.employee'])->group(function () {
