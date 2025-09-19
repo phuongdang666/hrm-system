@@ -1,13 +1,35 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "@inertiajs/react";
+import { RouteFunction } from "@/types/ziggy";
+
+declare const route: RouteFunction;
 import AdminLayout from "@/layouts/admin/AdminLayout";
 import PageMeta from "@/components/common/PageMeta";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import Button from "@/components/ui/button/Button";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { Table, TableHeader, TableRow, TableCell, TableBody } from "@/components/ui/table";
+import Modal from "../../Components/Modal";
+import EmployeeForm from "../../Components/Forms/EmployeeForm";
+
+interface Employee {
+    id: number;
+    code: string;
+    name: string;
+    email: string;
+    department_id: number;
+    department?: { id: number; name: string };
+    title_id: number;
+    title?: { id: number; name: string };
+    status: 'active' | 'inactive';
+}
 
 export default function EmployeeManage({ employees, filters = {}, departments = [], titles = [] }: any) {
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+
     const form: any = useForm({
         code: filters.code || "",
         name: filters.name || "",
@@ -67,7 +89,10 @@ export default function EmployeeManage({ employees, filters = {}, departments = 
                                 <option value="inactive">Inactive</option>
                             </select>
                             <div className="flex items-center">
-                                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all duration-150 ease-in-out hover:shadow-indigo-100 hover:shadow-lg">
+                                <Button
+                                    onClick={() => setShowCreateModal(true)}
+                                    className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all duration-150 ease-in-out hover:shadow-indigo-100 hover:shadow-lg"
+                                >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                     New Employee
                                 </Button>
@@ -110,10 +135,22 @@ export default function EmployeeManage({ employees, filters = {}, departments = 
                                         </TableCell>
                                         <TableCell className="px-4 py-3">
                                             <div className="flex items-center gap-1">
-                                                <button className="p-1.5 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-150">
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedEmployee(e);
+                                                        setShowEditModal(true);
+                                                    }}
+                                                    className="p-1.5 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-150"
+                                                >
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                                 </button>
-                                                <button className="p-1.5 rounded-lg text-gray-500 hover:text-red-600 hover:bg-red-50 transition-all duration-150">
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedEmployee(e);
+                                                        setShowDeleteModal(true);
+                                                    }}
+                                                    className="p-1.5 rounded-lg text-gray-500 hover:text-red-600 hover:bg-red-50 transition-all duration-150"
+                                                >
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                                 </button>
                                             </div>
@@ -187,6 +224,74 @@ export default function EmployeeManage({ employees, filters = {}, departments = 
                     </div>
                 </CardContent>
             </Card>
+
+            {/* Create Employee Modal */}
+            <Modal
+                show={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                title="Create New Employee"
+                maxWidth="lg"
+            >
+                <EmployeeForm
+                    departments={departments}
+                    titles={titles}
+                    onClose={() => setShowCreateModal(false)}
+                />
+            </Modal>
+
+            {/* Edit Employee Modal */}
+            <Modal
+                show={showEditModal}
+                onClose={() => setShowEditModal(false)}
+                title="Edit Employee"
+                maxWidth="lg"
+            >
+                <EmployeeForm
+                    departments={departments}
+                    titles={titles}
+                    employee={selectedEmployee}
+                    onClose={() => setShowEditModal(false)}
+                />
+            </Modal>
+
+            {/* Delete Confirmation Modal */}
+            <Modal
+                show={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                title="Delete Employee"
+                maxWidth="sm"
+            >
+                <div className="p-6">
+                    <h3 className="text-lg font-medium text-gray-900">
+                        Are you sure you want to delete this employee?
+                    </h3>
+                    <p className="mt-2 text-sm text-gray-500">
+                        This action cannot be undone. This will permanently delete the employee {selectedEmployee?.name} ({selectedEmployee?.code}).
+                    </p>
+                    <div className="mt-6 flex justify-end space-x-3">
+                        <button
+                            type="button"
+                            className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                            onClick={() => setShowDeleteModal(false)}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="button"
+                            className="inline-flex justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                            onClick={() => {
+                                if (selectedEmployee) {
+                                    form.delete(route('admin.employees.destroy', selectedEmployee.id), {
+                                        onSuccess: () => setShowDeleteModal(false),
+                                    });
+                                }
+                            }}
+                        >
+                            Delete Employee
+                        </button>
+                    </div>
+                </div>
+            </Modal>
         </AdminLayout>
     );
 }
