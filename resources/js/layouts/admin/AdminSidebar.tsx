@@ -154,7 +154,7 @@ const AdminSidebar: React.FC = () => {
               <div className="text-sm font-semibold text-gray-800 dark:text-white">Admin</div>
               <div className="text-xs text-gray-500">Administrator</div>
             </div>
-            <Link href="/logout" className="text-xs text-red-500 hover:underline">Logout</Link>
+            <Link method="post" href="/admin/logout" className="text-xs text-red-500 hover:underline">Logout</Link>
           </div>
         ) : (
           <div className="flex items-center justify-center">

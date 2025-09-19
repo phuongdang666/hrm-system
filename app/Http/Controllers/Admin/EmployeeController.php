@@ -6,15 +6,48 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Employee;
+use App\Models\Department;
+use App\Models\Title;
 use App\Http\Requests\Admin\EmployeeRequest;
 
 class EmployeeController extends Controller
 {
     public function index()
     {
-        $employees = Employee::paginate(15);
+        $query = Employee::with(['department', 'title']);
+
+        $filters = request()->only(['code', 'name', 'department', 'title', 'status']);
+
+        if (!empty($filters['code'])) {
+            $query->where('code', 'like', "%{$filters['code']}%");
+        }
+
+        if (!empty($filters['name'])) {
+            $query->where('name', 'like', "%{$filters['name']}%");
+        }
+
+        if (!empty($filters['department'])) {
+            $query->where('department_id', $filters['department']);
+        }
+
+        if (!empty($filters['title'])) {
+            $query->where('title_id', $filters['title']);
+        }
+
+        if (isset($filters['status']) && $filters['status'] !== '') {
+            $query->where('status', $filters['status']);
+        }
+
+        $employees = $query->orderBy('name')->paginate(15)->withQueryString();
+
+        $departments = Department::orderBy('name')->get(['id', 'name']);
+        $titles = Title::orderBy('name')->get(['id', 'name']);
+
         return Inertia::render('Admin/EmployeeManage', [
             'employees' => $employees,
+            'filters' => $filters,
+            'departments' => $departments,
+            'titles' => $titles,
         ]);
     }
 
