@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\DepartmentRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Department;
@@ -10,69 +11,75 @@ use App\Models\Employee;
 
 class DepartmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $departments = Department::with('employees')->paginate(15);
-        return Inertia::render('Admin/DepartmentManage', ['departments' => $departments]);
-    }
+        $query = Department::query()
+            ->with(['manager:id,name', 'employees.title:id,name'])
+            ->when($request->input('name'), function ($query, $name) {
+                $query->where('name', 'like', "%{$name}%");
+            })
+            ->when($request->input('manager_id'), function ($query, $managerId) {
+                $query->where('manager_id', $managerId);
+            });
 
-    public function create()
-    {
-        return Inertia::render('Admin/Departments/Create');
-    }
+        $departments = $query->latest()->paginate(10)->withQueryString();
+        $employees = Employee::with('title:id,name')->get(['id', 'name', 'email', 'title_id']);
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+        return Inertia::render('Admin/DepartmentManage', [
+            'departments' => $departments,
+            'employees' => $employees,
+            'filters' => $request->only(['name', 'manager_id']),
         ]);
-
-        Department::create($validated);
-        return redirect()->route('admin.departments.index');
     }
 
-    public function show($id)
+    public function store(DepartmentRequest $request)
     {
-        $department = Department::with('employees')->findOrFail($id);
-        return Inertia::render('Admin/Departments/Show', ['department' => $department]);
+        $department = Department::create($request->validated());
+
+        return redirect()->route('admin.departments.index')
+            ->with('success', 'Department created successfully.');
     }
 
-    public function edit($id)
+    public function update(DepartmentRequest $request, Department $department)
     {
-        $department = Department::findOrFail($id);
-        return Inertia::render('Admin/Departments/Edit', ['department' => $department]);
+        $department->update($request->validated());
+
+        return redirect()->route('admin.departments.index')
+            ->with('success', 'Department updated successfully.');
     }
 
-    public function update(Request $request, $id)
+    public function destroy(Department $department)
     {
-        $department = Department::findOrFail($id);
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'manager_id' => 'nullable|exists:employees,id',
-        ]);
+        // Detach all employees from this department
+        $department->employees()->update(['department_id' => null]);
 
-        $department->update($validated);
-        return redirect()->route('admin.departments.index');
-    }
-
-    public function destroy($id)
-    {
-        $department = Department::findOrFail($id);
         $department->delete();
-        return redirect()->route('admin.departments.index');
+
+        return redirect()->route('admin.departments.index')
+            ->with('success', 'Department deleted successfully.');
     }
 
-    // Assign manager to department
-    public function assignManager(Request $request, $id)
+    public function addEmployee(Request $request, Department $department)
     {
-        $department = Department::findOrFail($id);
         $validated = $request->validate([
-            'manager_id' => 'nullable|exists:employees,id',
+            'employee_ids' => 'required|array',
+            'employee_ids.*' => 'exists:employees,id'
         ]);
 
-        $department->update(['manager_id' => $validated['manager_id'] ?? null]);
-        return redirect()->route('admin.departments.show', $department->id);
+        // Update department_id for all selected employees
+        Employee::whereIn('id', $validated['employee_ids'])
+            ->update(['department_id' => $department->id]);
+
+        return back()->with('success', 'Employees assigned successfully.');
+    }
+
+    public function removeEmployee(Department $department, Employee $employee)
+    {
+        if ($employee->department_id === $department->id) {
+            $employee->update(['department_id' => null]);
+            return back()->with('success', 'Employee removed from department.');
+        }
+
+        return back()->with('error', 'Employee is not in this department.');
     }
 }

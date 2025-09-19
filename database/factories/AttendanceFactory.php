@@ -14,8 +14,8 @@ class AttendanceFactory extends Factory
         return [
             'employee_id' => \App\Models\Employee::factory(),
             'date' => $this->faker->date(),
-            'check_in_at' => $this->faker->dateTimeThisYear(),
-            'check_out_at' => $this->faker->dateTimeThisYear(),
+            'checkin_at' => $this->faker->time('H:i:s', '09:00:00'),
+            'checkout_at' => $this->faker->time('H:i:s', '18:00:00'),
             'regular_hours' => $this->faker->randomFloat(2, 4, 8),
             'overtime_hours' => $this->faker->randomFloat(2, 0, 4),
             'total_hours' => $this->faker->randomFloat(2, 4, 12),
