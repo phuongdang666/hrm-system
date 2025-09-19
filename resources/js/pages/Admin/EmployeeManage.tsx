@@ -17,11 +17,19 @@ interface Employee {
     code: string;
     name: string;
     email: string;
+    phone: string;
+    address: string;
     department_id: number;
-    department?: { id: number; name: string };
     title_id: number;
-    title?: { id: number; name: string };
+    base_salary: number;
+    join_date: string;
+    birth_date: string;
+    contract_end_at: string;
     status: 'active' | 'inactive';
+    avatar_path?: string;
+    meta?: Record<string, any>;
+    department?: { id: number; name: string };
+    title?: { id: number; name: string };
 }
 
 export default function EmployeeManage({ employees, filters = {}, departments = [], titles = [] }: any) {

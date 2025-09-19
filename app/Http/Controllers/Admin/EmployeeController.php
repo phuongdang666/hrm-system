@@ -59,6 +59,12 @@ class EmployeeController extends Controller
     public function store(EmployeeRequest $request)
     {
         $data = $request->validated();
+
+        // Hash password if it's provided
+        if (isset($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
+        }
+
         Employee::create($data);
         return redirect()->route('admin.employees.index');
     }
@@ -77,8 +83,18 @@ class EmployeeController extends Controller
 
     public function update(EmployeeRequest $request, $id)
     {
+        $data = $request->validated();
         $employee = Employee::findOrFail($id);
-        $employee->update($request->validated());
+
+        // Only hash password if it's provided in the request
+        if (isset($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
+        } else {
+            // Remove password field if not provided to prevent overwriting with null
+            unset($data['password']);
+        }
+
+        $employee->update($data);
         return redirect()->route('admin.employees.index');
     }
 
