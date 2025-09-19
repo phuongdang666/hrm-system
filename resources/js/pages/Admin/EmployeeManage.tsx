@@ -37,11 +37,8 @@ export default function EmployeeManage({ employees, filters = {}, departments = 
 
             <Card>
                 <CardHeader className="flex items-center justify-between">
-                    <div>
-                        <CardTitle>Employees</CardTitle>
-                    </div>
+
                     <div className="flex items-center gap-2">
-                        <Button variant="outline">Export CSV</Button>
                         <Button>New Employee</Button>
                     </div>
                 </CardHeader>

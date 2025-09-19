@@ -18,7 +18,6 @@ import {
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
-
 type NavItem = {
   name: string;
   icon: React.ReactNode;

@@ -8,7 +8,12 @@ const AdminSidebar: React.FC = () => {
   const { url } = usePage();
   const [query, setQuery] = useState("");
 
-  const isActive = (path: string) => url === path || url.startsWith(path + "/");
+  // const isActive = (path: string) => url === path || url.startsWith(path + "/");
+  const isActive = (path: string) => {
+    const currentPath = window.location.pathname;
+    return currentPath === path || currentPath.startsWith(path + "/");
+  };
+
 
   const items = useMemo(
     () => [
