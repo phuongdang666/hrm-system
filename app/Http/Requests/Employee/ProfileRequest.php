@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Employee;
+namespace App\Http\Requests\Employee;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class ProfileRequest extends FormRequest
 {
@@ -15,11 +16,28 @@ class ProfileRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:employees,email,' . $this->user('employee')->id],
-            'phone' => ['nullable', 'string', 'max:20'],
+            // 'email' => [
+            //     'required',
+            //     'email',
+            //     'max:255',
+            //     'unique:employees,email,' . $this->user('employee')->id
+            // ],
+            'phone' => [
+                'nullable',
+                'string',
+                'max:20',
+                'regex:/^([0-9\s\-\+\(\)]*)$/'
+            ],
             'address' => ['nullable', 'string', 'max:500'],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'avatar' => ['nullable', 'image', 'max:2048'], // 2MB max
+            'password' => [
+                'nullable',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols(),
+                'confirmed'
+            ],
         ];
     }
 

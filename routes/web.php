@@ -55,6 +55,7 @@ Route::prefix('admin')->middleware(['auth.admin'])->group(function () {
 Route::prefix('employee')->middleware(['auth.employee'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('employee.profile');
     Route::post('/profile', [ProfileController::class, 'update'])->name('employee.profile.update');
+    Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('employee.profile.avatar.update');
     Route::post('logout', [EmployeeLoginController::class, 'logout'])->name('employee.logout');
 });
 

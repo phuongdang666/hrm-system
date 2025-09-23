@@ -25,7 +25,7 @@ class Employee extends Authenticatable
         'birth_date',
         'contract_end_at',
         'status',
-        'avatar_path',
+        'avatar',
         'meta'
     ];
 

@@ -3,57 +3,47 @@
 namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use App\Models\Employee;
 use App\Http\Requests\Employee\ProfileRequest;
-use Illuminate\Support\Facades\Hash;
+use App\Models\Employee;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
+use Intervention\Image\ImageManager;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
+    /**
+     * Display employee profile.
+     */
     public function show()
     {
-        /** @var \App\Models\Employee $employee */
-        $employee = Auth::guard('employee')->user();
-
-        // Clear remember token if it's causing issues
-        if ($employee && $employee->getRememberToken()) {
-            $employee->setRememberToken(null);
-            $employee->save();
-        }
-
-        $employee->load('department', 'title');
+        $employee = $this->getAuthEmployee();
+        $employee->load(['department', 'title']);
 
         return Inertia::render('Employee/EmployeeProfile', [
             'employee' => array_merge($employee->toArray(), [
-                'base_salary' => number_format($employee->base_salary, 0, ',', '.'),
+                'formatted_salary' => number_format($employee->base_salary, 0, ',', '.'),
+                'base_salary' => $employee->base_salary,
                 'join_date' => $employee->join_date?->format('Y-m-d'),
                 'birth_date' => $employee->birth_date?->format('Y-m-d'),
+                'avatar_url' => $employee->avatar ? URL::to('storage/' . $employee->avatar) : null,
             ]),
         ]);
     }
 
-    public function update(Request $request)
+    /**
+     * Update employee profile information.
+     */
+    public function update(ProfileRequest $request)
     {
-        /** @var \App\Models\Employee $employee */
-        $employee = Auth::guard('employee')->user();
-
-        // Ensure remember token is cleared
-        $employee->setRememberToken(null);
-
-        // Validate request
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:employees,email,' . $employee->id],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'address' => ['nullable', 'string', 'max:500'],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'avatar' => ['nullable', 'image', 'max:2048'], // 2MB max
-        ]);
+        $employee = $this->getAuthEmployee();
+        $data = $request->validated();
 
         // Handle password update
         if (!empty($data['password'])) {
@@ -62,35 +52,129 @@ class ProfileController extends Controller
             unset($data['password']);
         }
 
-        // Handle avatar upload
-        if ($request->hasFile('avatar')) {
-            $path = $request->file('avatar')->store('avatars', 'public');
-            $data['avatar_path'] = Storage::url($path);
+        // Protect sensitive fields
+        $this->removeProtectedFields($data);
+
+        // Update employee
+        $employee->update($data);
+
+        return back()->with('success', 'Profile updated successfully.');
+    }
+
+    /**
+     * Update employee avatar.
+     */
+    public function updateAvatar(Request $request)
+    {
+        try {
+            Log::info('Avatar upload request received', [
+                'files' => $request->allFiles(),
+                'hasFile' => $request->hasFile('avatar'),
+                'content-type' => $request->header('Content-Type'),
+                'request_content' => $request->all()
+            ]);
+
+            $validator = Validator::make($request->all(), [
+                'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png,gif', 'max:2048']
+            ]);
+
+            if ($validator->fails()) {
+                return back()->withErrors($validator)->withInput();
+            }
+
+            if (!$request->hasFile('avatar') || !$request->file('avatar')->isValid()) {
+                return back()->withErrors(['avatar' => 'No valid file was uploaded.']);
+            }
+
+            $employee = $this->getAuthEmployee();
+            $file = $request->file('avatar');
+
+            if (!$file->isValid()) {
+                return back()->withErrors(['avatar' => 'The uploaded file is not valid.']);
+            }
+
+            // Generate unique filename
+            $filename = sprintf(
+                'avatar-%s-%s.%s',
+                $employee->id,
+                Str::random(10),
+                $file->getClientOriginalExtension()
+            );
+
+            // Prepare storage path
+            $path = 'avatars/' . $filename;
+
+            // Ensure avatars directory exists
+            if (!Storage::disk('public')->exists('avatars')) {
+                Storage::disk('public')->makeDirectory('avatars');
+            }
+
+            // Create temp directory if it doesn't exist
+            $tempPath = storage_path('app/temp');
+            if (!file_exists($tempPath)) {
+                mkdir($tempPath, 0755, true);
+            }
+
+            // Process image in temp location first
+            $manager = ImageManager::gd();
+            $processedImage = $manager->read($file->getRealPath())
+                ->cover(400, 400)
+                ->toJpeg(80);
+
+            // Save to temp location
+            $tempFile = $tempPath . '/' . $filename;
+            $processedImage->save($tempFile);
+
+            // Verify the processed image
+            if (!file_exists($tempFile) || filesize($tempFile) === 0) {
+                return back()->withErrors(['avatar' => 'Failed to process the image.']);
+            }
+
+            // Move to final location
+            Storage::disk('public')->put($path, file_get_contents($tempFile));
+
+            // Clean up temp file
+            @unlink($tempFile);
 
             // Delete old avatar if exists
-            if ($employee->avatar_path) {
-                $oldPath = str_replace('/storage/', '', $employee->avatar_path);
-                if ($oldPath && Storage::disk('public')->exists($oldPath)) {
-                    Storage::disk('public')->delete($oldPath);
-                }
+            if ($employee->avatar) {
+                Storage::disk('public')->delete($employee->avatar);
             }
+
+            // Update employee record
+            $employee->update(['avatar' => $path]);
+
+            return back()->with('success', 'Avatar updated successfully.');
+        } catch (\Exception $e) {
+            report($e); // Log the error
+            return back()->withErrors(['avatar' => 'Failed to update avatar. Please try again.']);
         }
+    }
 
-        // Remove protected fields
-        unset($data['department_id']);
-        unset($data['title_id']);
-        unset($data['base_salary']);
-        unset($data['join_date']);
+    /**
+     * Get authenticated employee.
+     */
+    protected function getAuthEmployee(): Employee
+    {
+        return Auth::guard('employee')->user();
+    }
 
-        $employee->fill($data);
-        $employee->save();
+    /**
+     * Remove protected fields from data array.
+     */
+    protected function removeProtectedFields(array &$data): void
+    {
+        $protectedFields = [
+            'department_id',
+            'title_id',
+            'base_salary',
+            'join_date',
+            'employee_code',
+            'status',
+        ];
 
-        // // Clear remember me cookie
-        // Cookie::queue(Cookie::forget(Auth::guard('employee')->getRecallerName()));
-        // // Clear remember token to prevent issues
-        // $employee->setRememberToken(null);
-        // $employee->save();
-
-        return redirect()->route('employee.profile')->with('success', 'Profile updated successfully.');
+        foreach ($protectedFields as $field) {
+            unset($data[$field]);
+        }
     }
 }

@@ -6,6 +6,8 @@ import PageBreadcrumb from '@/components/common/PageBreadCrumb';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Button from '@/components/ui/button/Button';
 
+import AvatarUpload from '@/components/employee/AvatarUpload';
+
 interface Props {
     employee: {
         id: number;
@@ -14,6 +16,7 @@ interface Props {
         email: string;
         phone?: string;
         address?: string;
+        avatar?: string;
         avatar_path?: string;
         base_salary: number;
         join_date: string;
@@ -57,9 +60,9 @@ export default function EmployeeProfile({ employee }: Props) {
                         <CardContent className="p-6 text-center">
                             <div className="mb-4">
                                 <div className="relative mx-auto w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-white shadow-lg">
-                                    {employee.avatar_path ? (
+                                    {employee.avatar ? (
                                         <img
-                                            src={employee.avatar_path}
+                                            src={`/storage/${employee.avatar}`}
                                             alt={employee.name}
                                             className="w-full h-full object-cover"
                                         />
@@ -68,6 +71,13 @@ export default function EmployeeProfile({ employee }: Props) {
                                             {employee.name.charAt(0).toUpperCase()}
                                         </div>
                                     )}
+                                    <AvatarUpload
+                                        employeeId={employee.id}
+                                        currentAvatar={employee.avatar}
+                                        onAvatarUpdated={() => {
+                                            window.location.reload();
+                                        }}
+                                    />
                                 </div>
                             </div>
                             <h3 className="text-xl font-bold text-gray-900">{employee.name}</h3>
@@ -117,6 +127,8 @@ export default function EmployeeProfile({ employee }: Props) {
                                     e.preventDefault();
                                     form.post(route('employee.profile.update'), {
                                         preserveScroll: true,
+                                        onSuccess: () => setIsEditing(false),
+                                        
                                     });
                                 }}>
                                     <div className="space-y-6">
@@ -134,7 +146,7 @@ export default function EmployeeProfile({ employee }: Props) {
                                             )}
                                         </div>
 
-                                        <div>
+                                        {/* <div>
                                             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
                                             <input
                                                 type="email"
@@ -146,7 +158,7 @@ export default function EmployeeProfile({ employee }: Props) {
                                             {form.errors.email && (
                                                 <div className="mt-1 text-sm text-red-600">{form.errors.email}</div>
                                             )}
-                                        </div>
+                                        </div> */}
 
                                         <div>
                                             <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone</label>
