@@ -46,6 +46,11 @@ Route::prefix('admin')->middleware(['auth.admin'])->group(function () {
 
     // Attendance routes
     Route::resource('attendances', AttendanceController::class)->only(['index', 'update'])->names('admin.attendances');
+    // Announcement routes
+    Route::resource('announcements', AnnouncementController::class)->names('admin.announcements');
+    // AJAX endpoints for announcements
+    Route::post('announcements/send', [AnnouncementController::class, 'store'])->name('admin.announcements.send');
+    Route::get('announcements/{announcement}/status', [AnnouncementController::class, 'status'])->name('admin.announcements.status');
 });
 
 Route::prefix('employee')->middleware(['auth.employee'])->group(function () {
