@@ -11,7 +11,7 @@ class RedirectIfEmployee
     public function handle(Request $request, Closure $next)
     {
         if (Auth::guard('employee')->check()) {
-            return redirect()->route('employee.dashboard');
+            return redirect()->route('employee.profile');
         }
 
         return $next($request);

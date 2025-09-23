@@ -1,46 +1,42 @@
+import React from "react";
 import { SidebarProvider, useSidebar } from "../../context/SidebarContext";
-import AppHeader from "./EmployeeHeader";
 import Backdrop from "./Backdrop";
-import AppSidebar from "./EmployeeSidebar";
+import EmployeeSidebar from "./EmployeeSidebar";
+import EmployeeHeader from "./EmployeeHeader";
 
-interface LayoutContentProps {
+type LayoutProps = {
   children: React.ReactNode;
-}
+};
 
-
-const LayoutContent: React.FC<LayoutContentProps> = ({ children }) => {
+const LayoutInner: React.FC<LayoutProps> = ({ children }) => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
 
+  // left margin equals sidebar width when expanded/collapsed
+  // keep these in sync with AdminSidebar: expanded = w-72 (18rem), collapsed = w-20 (5rem)
+  const leftMarginClass = isExpanded || isHovered ? "lg:ml-72" : "lg:ml-20";
+
   return (
-    <div className="min-h-screen xl:flex">
-      <div>
-        <AppSidebar />
-        <Backdrop />
-      </div>
-      <div
-        className={`flex-1 transition-all duration-300 ease-in-out ${
-          isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"
-        } ${isMobileOpen ? "ml-0" : ""}`}
-      >
-        <AppHeader />
-        <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
-          {children} 
-        </div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+      <EmployeeSidebar />
+      <Backdrop />
+
+      <div className={`${leftMarginClass} transition-all duration-300 ease-in-out`}>
+        <EmployeeHeader />
+
+        <main className="p-4 md:p-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="space-y-6">{children}</div>
+          </div>
+        </main>
       </div>
     </div>
   );
 };
 
-interface AppLayoutProps {
-  children: React.ReactNode;
-}
-
-const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
+export default function AdminLayout({ children }: LayoutProps) {
   return (
     <SidebarProvider>
-      <LayoutContent>{children}</LayoutContent>
+      <LayoutInner>{children}</LayoutInner>
     </SidebarProvider>
   );
-};
-
-export default AppLayout;
+}

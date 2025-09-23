@@ -1,16 +1,15 @@
 <?php
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\EmployeeLoginController;
-
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\EmployeeController as AdminEmployeeController;
+use App\Http\Controllers\Employee\ProfileController;
 
 Route::prefix('admin')->middleware('guest.admin')->group(function () {
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
@@ -54,9 +53,8 @@ Route::prefix('admin')->middleware(['auth.admin'])->group(function () {
 });
 
 Route::prefix('employee')->middleware(['auth.employee'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('employee.dashboard');
-    })->name('employee.dashboard');
+    Route::get('/profile', [ProfileController::class, 'show'])->name('employee.profile');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('employee.profile.update');
     Route::post('logout', [EmployeeLoginController::class, 'logout'])->name('employee.logout');
 });
 

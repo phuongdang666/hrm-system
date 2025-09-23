@@ -23,7 +23,7 @@ class EmployeeLoginController extends Controller
 
         if (Auth::guard('employee')->attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended('/employee/dashboard');
+            return redirect()->intended('/employee/profile');
         }
 
         return back()->withErrors([
