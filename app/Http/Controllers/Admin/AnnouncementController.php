@@ -78,6 +78,15 @@ class AnnouncementController extends Controller
 
         $recipientEmployees = $recipientEmployees->unique()->values();
 
+        // If there are no recipients, return validation error for AJAX requests
+        if ($recipientEmployees->count() === 0) {
+            if ($request->expectsJson()) {
+                return response()->json(['errors' => ['recipients' => ['Please choose at least one recipient (employee, department, or title).']]], 422);
+            }
+
+            return redirect()->back()->withErrors(['recipients' => 'Please choose at least one recipient (employee, department, or title).'])->withInput();
+        }
+
         foreach ($recipientEmployees as $empId) {
             $emp = Employee::find($empId);
             AnnouncementRecipient::create([

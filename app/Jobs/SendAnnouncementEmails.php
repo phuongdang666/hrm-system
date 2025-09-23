@@ -39,3 +39,4 @@ class SendAnnouncementEmails implements ShouldQueue
         $announcement->update(['sent_at' => now()]);
     }
 }
+
