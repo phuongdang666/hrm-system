@@ -11,6 +11,7 @@ use App\Models\Employee;
 use App\Models\Department;
 use App\Models\Title;
 use App\Jobs\SendAnnouncementEmails;
+use App\Http\Requests\Admin\AnnouncementRequest;
 
 class AnnouncementController extends Controller
 {
@@ -41,19 +42,10 @@ class AnnouncementController extends Controller
         return Inertia::render('Admin/Announcements/Create', compact('departments', 'titles', 'employees'));
     }
 
-    public function store(Request $request)
+    public function store(AnnouncementRequest $request)
     {
         // Validate and store announcement
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'required|string',
-            'departments' => 'array',
-            'departments.*' => 'integer|exists:departments,id',
-            'titles' => 'array',
-            'titles.*' => 'integer|exists:titles,id',
-            'employees' => 'array',
-            'employees.*' => 'integer|exists:employees,id',
-        ]);
+        $validated = $request->validated();
 
         $announcement = Announcement::create([
             'title' => $validated['title'],

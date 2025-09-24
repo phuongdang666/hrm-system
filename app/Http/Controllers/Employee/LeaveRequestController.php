@@ -7,6 +7,7 @@ use App\Models\LeaveRequest;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Http\Requests\Employee\LeaveRequest as LeaveRequestForm;
 
 
 class LeaveRequestController extends Controller
@@ -37,15 +38,9 @@ class LeaveRequestController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(LeaveRequestForm $request)
     {
-        $request->validate([
-            'type' => 'required|string|max:100',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'reason' => 'required|string|max:255',
-        ]);
-
+        $request = $request->validated();
         $employee = auth('employee')->user();
         LeaveRequest::create([
             'employee_id'   => $employee->id,
