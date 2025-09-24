@@ -9,6 +9,7 @@ use App\Models\Employee;
 use App\Models\Department;
 use App\Models\Title;
 use App\Http\Requests\Admin\EmployeeRequest;
+use App\Events\NewEmployee;
 
 class EmployeeController extends Controller
 {
@@ -65,7 +66,11 @@ class EmployeeController extends Controller
             $data['password'] = bcrypt($data['password']);
         }
 
-        Employee::create($data);
+        $employee = Employee::create($data);
+
+        // Dispatch the NewEmployee event
+        NewEmployee::dispatch($employee->id);
+
         return redirect()->route('admin.employees.index');
     }
 
