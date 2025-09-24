@@ -8,6 +8,7 @@ use App\Models\Employee;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+
 class LeaveRequestController extends Controller
 {
     public function index()
@@ -18,7 +19,8 @@ class LeaveRequestController extends Controller
             // Get leave requests from staff in the same department
             $leaveRequests = LeaveRequest::whereHas('employee', function ($query) use ($employee) {
                 $query->where('department_id', $employee->department_id)
-                    ->where('role', 'staff');
+                    ->where('role', 'staff')
+                    ->orderByDesc('id');
             })->with('employee')->get();
         } else {
             // Get own leave requests

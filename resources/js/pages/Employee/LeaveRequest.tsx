@@ -45,6 +45,10 @@ export default function LeaveRequest({ leaveRequests, userRole, departmentMember
         reason: '',
     });
 
+    const statusForm = useForm({
+        status: '',
+    });
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post(route('employee.leave-requests.store'), {
@@ -57,15 +61,15 @@ export default function LeaveRequest({ leaveRequests, userRole, departmentMember
     };
 
     const handleStatusUpdate = (leaveRequestId: number, status: 'approved' | 'rejected') => {
-        const form = useForm({
-            _method: 'patch',
-            status,
-        });
+        // First update the form data
+        statusForm.setData('status', status);
 
-        form.post(route('employee.leave-requests.update-status', leaveRequestId), {
+        // Then submit the form
+        statusForm.submit('patch', route('employee.leave-requests.update-status', leaveRequestId), {
             preserveScroll: true,
             onSuccess: () => {
                 console.log("Status updated successfully");
+                window.location.reload();
             },
             onError: (errors) => {
                 console.error("Failed to update status", errors);
@@ -216,7 +220,7 @@ export default function LeaveRequest({ leaveRequests, userRole, departmentMember
                 {/* Leave Requests List */}
                 <div className="md:col-span-8">
                     <div className="space-y-4">
-                        {leaveRequests.map((request) => (
+                        {leaveRequests.sort((a, b) => b.id - a.id).map((request) => (
                             <Card key={request.id} className="overflow-hidden border border-blue-100/50 shadow-lg shadow-blue-900/5">
                                 <CardHeader className="bg-gradient-to-br from-blue-50 via-indigo-50 to-violet-50 border-b border-blue-100/50">
                                     <CardTitle className="text-lg font-bold">
@@ -277,4 +281,4 @@ export default function LeaveRequest({ leaveRequests, userRole, departmentMember
             </div>
         </EmployeeLayout>
     );
-}
+};
