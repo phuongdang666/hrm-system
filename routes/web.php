@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\EmployeeController as AdminEmployeeController;
 use App\Http\Controllers\Employee\ProfileController;
+use App\Http\Controllers\Employee\LeaveRequestController;
 
 Route::prefix('admin')->middleware('guest.admin')->group(function () {
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
@@ -57,6 +58,14 @@ Route::prefix('employee')->middleware(['auth.employee'])->group(function () {
     Route::post('/profile', [ProfileController::class, 'update'])->name('employee.profile.update');
     Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('employee.profile.avatar.update');
     Route::post('logout', [EmployeeLoginController::class, 'logout'])->name('employee.logout');
+
+    // Leave Request routes for staff
+    Route::get('/leave-requests', [LeaveRequestController::class, 'index'])->middleware('role:staff')->name('employee.leave-requests');
+    Route::post('/leave-requests', [LeaveRequestController::class, 'store'])->middleware('role:staff')->name('employee.leave-requests.store');
+
+    // Leave Request routes for manager
+    Route::get('/leave-requests', [LeaveRequestController::class, 'index'])->middleware('role:manager')->name('employee.leave-requests.manage');
+    Route::patch('/leave-requests/{leaveRequest}/status', [LeaveRequestController::class, 'updateStatus'])->middleware('role:manager')->name('employee.leave-requests.update-status');
 });
 
 

@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class Employee extends Authenticatable
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes,HasRoles;
 
     protected $fillable = [
         'code',
@@ -26,7 +27,8 @@ class Employee extends Authenticatable
         'contract_end_at',
         'status',
         'avatar',
-        'meta'
+        'meta',
+        'role'
     ];
 
     protected $hidden = [
@@ -42,6 +44,10 @@ class Employee extends Authenticatable
         'meta' => 'array',
         'deleted_at' => 'datetime',
     ];
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
 
     public function department()
     {
@@ -51,5 +57,10 @@ class Employee extends Authenticatable
     public function title()
     {
         return $this->belongsTo(Title::class);
+    }
+
+    public function leaveRequests()
+    {
+        return $this->hasMany(LeaveRequest::class);
     }
 }

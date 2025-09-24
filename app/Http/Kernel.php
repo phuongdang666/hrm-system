@@ -22,7 +22,7 @@ class Kernel extends HttpKernel
     /**
      * The application's route middleware groups.
      */
-    protected $routeMiddleware = [
+    protected $middlewareAliases = [
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.admin' => \App\Http\Middleware\AdminMiddleware::class,
         'auth.employee' => \App\Http\Middleware\EmployeeMiddleware::class,
@@ -30,7 +30,6 @@ class Kernel extends HttpKernel
         'guest.employee' => \App\Http\Middleware\RedirectIfEmployee::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'check.role' => \App\Http\Middleware\CheckRole::class,
     ];
-
-
 }

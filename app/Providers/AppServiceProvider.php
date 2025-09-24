@@ -27,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind('auth.employee', \App\Http\Middleware\EmployeeMiddleware::class);
         $this->app->bind('guest.admin', \App\Http\Middleware\RedirectIfAdmin::class);
         $this->app->bind('guest.employee', \App\Http\Middleware\RedirectIfEmployee::class);
+        $this->app->bind('role', \App\Http\Middleware\CheckRole::class);
     }
 
     /**
@@ -38,14 +39,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Ensure route middleware aliases are registered on the router so
         // they can be resolved during the request lifecycle (including terminate()).
-        // This helps avoid "Target class [auth.admin] does not exist." errors
-        // when middleware aliases are referenced in routes but not yet available.
-        
         // $router = $this->app->make('\Illuminate\Routing\Router');
-
-        // $router->aliasMiddleware('auth.admin', \App\Http\Middleware\AdminMiddleware::class);
-        // $router->aliasMiddleware('auth.employee', \App\Http\Middleware\EmployeeMiddleware::class);
-        // $router->aliasMiddleware('guest.admin', \App\Http\Middleware\RedirectIfAdmin::class);
-        // $router->aliasMiddleware('guest.employee', \App\Http\Middleware\RedirectIfEmployee::class);
+        // $router->aliasMiddleware('check.role', \App\Http\Middleware\CheckRole::class);
     }
 }

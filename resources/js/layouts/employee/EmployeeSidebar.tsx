@@ -17,8 +17,8 @@ const AdminSidebar: React.FC = () => {
 
   const items = useMemo(
     () => [
-      { name: "Profile", path: "/employee/profile", icon: <Users className="w-5 h-5" /> }
-      
+      { name: "Profile", path: "/employee/profile", icon: <Users className="w-5 h-5" /> },
+      { name: "Leave Requests", path: "/employee/leave-requests", icon: <Layers className="w-5 h-5" /> },
     ],
     []
   );
