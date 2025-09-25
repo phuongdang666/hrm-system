@@ -149,7 +149,7 @@ export default function Attendance({ attendances,records, totalHours = 0, startD
                                     ))}
                                 </select>
                             </div>
-                            <div>
+                            {/* <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
                                 <select
                                     value={viewType}
@@ -159,7 +159,7 @@ export default function Attendance({ attendances,records, totalHours = 0, startD
                                     <option value="daily">Daily</option>
                                     <option value="monthly">Monthy</option>
                                 </select>
-                            </div>
+                            </div> */}
                             <div className="flex items-end">
                                 <Button
                                     type="submit"

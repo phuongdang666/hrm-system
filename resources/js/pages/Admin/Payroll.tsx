@@ -65,64 +65,88 @@ export default function PayrollPage({ payrolls, month }: Props) {
                 pageTitle="Payroll Management"
             ></PageBreadcrumb>
 
-            <Card className="mb-6">
-                <CardHeader>
-                    <CardTitle>Generate Payroll</CardTitle>
+            <Card className="mb-6 overflow-hidden border-0 shadow-lg bg-gradient-to-r from-purple-500 to-indigo-600">
+                <CardHeader className="border-b border-white/10">
+                    <CardTitle className="text-white flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        Generate Payroll
+                    </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="bg-white/5">
                     <form onSubmit={handleFilter} className="flex gap-4 items-end">
                         <div className="flex-1">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-white mb-1">
                                 Select Month
                             </label>
                             <input
                                 type="month"
                                 value={form.data.month}
                                 onChange={e => form.setData('month', e.target.value)}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                className="mt-1 block w-full rounded-lg border-white/20 bg-white/10 text-white placeholder-white/50 focus:border-white focus:ring-2 focus:ring-white/20"
                             />
                         </div>
-                        <Button type="submit" className="bg-blue-600 text-white">
+                        <Button type="submit" className="bg-white/10 text-white border border-white/20 hover:bg-white/20 transition-all duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                            </svg>
                             Filter
                         </Button>
                         <Button
                             type="button"
                             onClick={handleGenerateClick}
-                            className="bg-green-600 text-white"
+                            className="bg-emerald-500 text-white hover:bg-emerald-600 transition-colors flex items-center gap-2 shadow-lg shadow-emerald-500/20"
                         >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
                             Generate Payroll
                         </Button>
                     </form>
                 </CardContent>
             </Card>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Payroll List - {month}</CardTitle>
+            <Card className="border-0 shadow-xl bg-white">
+                <CardHeader className="border-b border-gray-100 bg-gray-50/50">
+                    <CardTitle className="flex items-center gap-2 text-gray-800">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                        Payroll List - {month}
+                    </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
-                                <TableRow>
-                                    <TableCell>Employee</TableCell>
-                                    <TableCell>Base Salary</TableCell>
-                                    <TableCell>OT Hours</TableCell>
-                                    <TableCell>Unpaid Leave</TableCell>
-                                    <TableCell>Final Salary</TableCell>
-                                    <TableCell>Actions</TableCell>
+                                <TableRow className="bg-gray-50/80">
+                                    <TableCell className="font-semibold text-gray-700">Employee</TableCell>
+                                    <TableCell className="font-semibold text-gray-700">Base Salary</TableCell>
+                                    <TableCell className="font-semibold text-gray-700">OT Hours</TableCell>
+                                    <TableCell className="font-semibold text-gray-700">Unpaid Leave</TableCell>
+                                    <TableCell className="font-semibold text-gray-700">Final Salary</TableCell>
+                                    <TableCell className="font-semibold text-gray-700">Actions</TableCell>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {payrolls.data.map((payroll: Payroll) => (
                                     <TableRow key={payroll.id} className={`group hover:bg-gray-50 transition-all duration-200 ${payroll.id % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'}`}>
-                                        <TableCell>{payroll.employee.name}</TableCell>
-                                        <TableCell>
+                                        <TableCell className="font-medium text-gray-900">{payroll.employee.name}</TableCell>
+                                        <TableCell className="text-emerald-600 font-medium">
                                             ${payroll.base_salary.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                                         </TableCell>
-                                        <TableCell>{payroll.total_overtime_hours} hrs</TableCell>
-                                        <TableCell>{payroll.unpaid_leave_days} days</TableCell>
                                         <TableCell>
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                {payroll.total_overtime_hours} hrs
+                                            </span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                {payroll.unpaid_leave_days} days
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="text-lg font-semibold text-emerald-600">
                                             ${payroll.net_salary.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                                         </TableCell>
                                         <TableCell>
@@ -139,8 +163,16 @@ export default function PayrollPage({ payrolls, month }: Props) {
                                 ))}
                                 {payrolls.data.length === 0 && (
                                     <TableRow>
-                                        <TableCell className="text-center py-4">
-                                            No payroll records found for this month.
+                                        <TableCell>
+                                            <div className="flex flex-col items-center justify-center py-12">
+                                                <div className="w-16 h-16 text-gray-300 mb-4">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                    </svg>
+                                                </div>
+                                                <h3 className="text-lg font-medium text-gray-900 mb-1">No Records Found</h3>
+                                                <p className="text-gray-500">No payroll records found for this month.</p>
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 )}
