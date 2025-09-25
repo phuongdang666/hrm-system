@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\EmployeeController as AdminEmployeeController;
 use App\Http\Controllers\Employee\ProfileController;
 use App\Http\Controllers\Employee\LeaveRequestController;
+use App\Http\Controllers\Admin\PayrollController;
 
 Route::prefix('admin')->middleware('guest.admin')->group(function () {
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
@@ -51,7 +52,12 @@ Route::prefix('admin')->middleware(['auth.admin'])->group(function () {
     // AJAX endpoints for announcements
     Route::post('announcements/send', [AnnouncementController::class, 'store'])->name('admin.announcements.send');
     Route::get('announcements/{announcement}/status', [AnnouncementController::class, 'status'])->name('admin.announcements.status');
+
+    Route::get('payrolls', [PayrollController::class, 'index'])->name('admin.payrolls.index');
+    Route::post('payrolls/generate', [PayrollController::class, 'generatePayrolls'])->name('admin.payrolls.generate');
+    Route::get('payrolls/{payroll}', [PayrollController::class, 'show'])->name('admin.payrolls.show');
 });
+
 
 Route::prefix('employee')->middleware(['auth.employee'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('employee.profile');
@@ -61,14 +67,14 @@ Route::prefix('employee')->middleware(['auth.employee'])->group(function () {
 
     // Leave Request routes for staff
     Route::get('/leave-requests', [LeaveRequestController::class, 'index'])
-    // ->middleware('role:staff')
-    ->name('employee.leave-requests');
+        // ->middleware('role:staff')
+        ->name('employee.leave-requests');
     Route::post('/leave-requests', [LeaveRequestController::class, 'store'])->middleware('role:staff')->name('employee.leave-requests.store');
 
     // Leave Request routes for manager
-    Route::get('/leave-requests', [LeaveRequestController::class, 'index'] )
-    // ->middleware('role:manager')
-    ->name('employee.leave-requests.manage');
+    Route::get('/leave-requests', [LeaveRequestController::class, 'index'])
+        // ->middleware('role:manager')
+        ->name('employee.leave-requests.manage');
     Route::patch('/leave-requests/{leaveRequest}/status', [LeaveRequestController::class, 'updateStatus'])->middleware('role:manager')->name('employee.leave-requests.update-status');
 });
 

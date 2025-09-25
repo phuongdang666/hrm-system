@@ -28,7 +28,8 @@ class PayrollService
             ->sum('overtime_hours');
 
         $unpaidDays = LeaveRequest::where('employee_id', $employee->id)
-            ->whereBetween('date_from', [$start, $end])
+            ->whereBetween('start_date', [$start, $end])
+            ->where('type', 'unpaid')
             ->where('status', 'approved')
             ->count();
 
@@ -44,7 +45,7 @@ class PayrollService
                 'total_overtime_hours' => $otHours,
                 'unpaid_leave_days' => $unpaidDays,
                 'net_salary' => round($salary, 2),
-                'status' => 'pending',
+                
             ]
         );
     }

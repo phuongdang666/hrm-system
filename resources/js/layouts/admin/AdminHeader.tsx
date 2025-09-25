@@ -86,7 +86,7 @@ const AppHeader: React.FC = () => {
           <div className="flex items-center gap-3">
             <ThemeToggleButton />
             <NotificationDropdown />
-            <UserDropdown />
+            {/* <UserDropdown /> */}
           </div>
         </div>
       </div>

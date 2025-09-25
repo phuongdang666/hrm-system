@@ -22,7 +22,7 @@ const AdminSidebar: React.FC = () => {
       { name: "Departments", path: "/admin/departments", icon: <Layers className="w-5 h-5" /> },
       { name: "Attendance", path: "/admin/attendances", icon: <Clock className="w-5 h-5" /> },
       { name: "Announcements", path: "/admin/announcements", icon: <Megaphone className="w-5 h-5" /> },
-      { name: "Payroll", path: "/admin/payrolls", icon: <Wallet className="w-5 h-5" /> },
+      { name: "Payroll", path: "/admin/payrolls", icon: <Wallet className="w-5 h-5" /> }
     ],
     []
   );

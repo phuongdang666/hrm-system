@@ -6,7 +6,7 @@ import { initializeTheme } from './hooks/use-appearance';
 import {Head} from '@inertiajs/react';
 import { ThemeProvider } from './context/ThemeContext';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = 'Secomus';
 
 createInertiaApp({
   title: (title) => title ? `${title} - ${appName}` : appName,

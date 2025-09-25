@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('payrolls', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained()->onDelete('cascade');
-            $table->tinyInteger('month');
+            $table->string('month', 7); // Format: YYYY-MM
             $table->decimal('base_salary', 10, 2);
             $table->decimal('total_worked_hours', 5, 2);
             $table->decimal('total_overtime_hours', 5, 2);
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        // Schema::dropIfExists('payrolls');
     }
 };

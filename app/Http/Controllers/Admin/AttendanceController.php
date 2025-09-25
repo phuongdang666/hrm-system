@@ -37,7 +37,7 @@ class AttendanceController extends Controller
             ->sum(DB::raw('total_hours'));
 
         // Get records with calculated fields
-        $records = $query->get()->map(function ($attendance) {
+        $records = $query->paginate(15)->map(function ($attendance) {
             return [
                 'id' => $attendance->id,
                 'employee_id' => $attendance->employee_id,

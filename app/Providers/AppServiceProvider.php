@@ -28,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind('guest.admin', \App\Http\Middleware\RedirectIfAdmin::class);
         $this->app->bind('guest.employee', \App\Http\Middleware\RedirectIfEmployee::class);
         $this->app->bind('role', \App\Http\Middleware\CheckRole::class);
+        
     }
 
     /**

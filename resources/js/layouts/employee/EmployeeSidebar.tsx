@@ -3,6 +3,10 @@ import { Link, usePage } from "@inertiajs/react";
 import { useSidebar } from "../../context/SidebarContext";
 import { Home, Users, Layers, Clock, Megaphone, Wallet } from "lucide-react";
 
+
+
+
+
 const AdminSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered, toggleSidebar, toggleMobileSidebar } = useSidebar();
   const { url } = usePage();
@@ -153,7 +157,7 @@ const AdminSidebar: React.FC = () => {
             <img src="/images/user/owner.jpg" alt="Admin" className="w-10 h-10 rounded-full ring-2 ring-white dark:ring-gray-900" />
             <div className="flex-1">
               <div className="text-sm font-semibold text-gray-800 dark:text-white">$employeeName</div>
-              <div className="text-xs text-gray-500">Administrator</div>
+              <div className="text-xs text-gray-500">$employeeTittle</div>
             </div>
             <Link method="post" href="/employee/logout" className="text-xs text-red-500 hover:underline">Logout</Link>
           </div>
