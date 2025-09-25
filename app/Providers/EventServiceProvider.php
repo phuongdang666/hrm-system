@@ -10,6 +10,7 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         \App\Events\NewEmployee::class => [
             \App\Listeners\SendWelcomeEmail::class,
+            // \App\Listeners\NotifyAdminNewEmployee::class,
         ],
     ];
 
