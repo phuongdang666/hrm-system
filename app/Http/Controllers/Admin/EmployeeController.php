@@ -70,6 +70,7 @@ class EmployeeController extends Controller
 
         // Dispatch the NewEmployee event
         NewEmployee::dispatch($employee->id);
+        
 
         return redirect()->route('admin.employees.index');
     }

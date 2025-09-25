@@ -3,6 +3,9 @@
 namespace App\Observers;
 
 use App\Models\Employee;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeEmail;
+
 
 class EmployeeObserver
 {
@@ -12,6 +15,7 @@ class EmployeeObserver
     public function created(Employee $employee): void
     {
         //
+        Mail::to($employee->email)->queue(new \App\Mail\WelcomeEmail($employee));
     }
 
     /**
