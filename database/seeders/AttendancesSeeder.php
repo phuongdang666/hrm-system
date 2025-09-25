@@ -15,14 +15,15 @@ class AttendancesSeeder extends Seeder
         Attendance::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $employees = Employee::inRandomOrder()->take(15)->get();
+        $employees = Employee::all();
 
         foreach ($employees as $employee) {
-            // create attendances for the last 14 days
-            for ($i = 0; $i < 14; $i++) {
+            // create attendances for the last 60 days
+            for ($i = 0; $i < 60; $i++) {
+                $date = now()->subDays($i);
                 Attendance::factory()->create([
                     'employee_id' => $employee->id,
-                    'date' => now()->subDays($i)->toDateString(),
+                    'date' => $date,
                 ]);
             }
         }

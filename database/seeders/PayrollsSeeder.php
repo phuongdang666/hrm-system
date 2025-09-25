@@ -1,33 +1,34 @@
 <?php
 
-namespace Database\Seeders;
+// namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Payroll;
-use App\Models\PayrollItem;
-use App\Models\Employee;
-use Illuminate\Support\Facades\DB;
+// use Illuminate\Database\Seeder;
+// use App\Models\Payroll;
+// use App\Models\PayrollItem;
+// use App\Models\Employee;
+// use Illuminate\Support\Facades\DB;
 
-class PayrollsSeeder extends Seeder
-{
-    public function run()
-    {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        PayrollItem::truncate();
-        Payroll::truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+// class PayrollsSeeder extends Seeder
+// {
+//     public function run()
+//     {
+//         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+//         PayrollItem::truncate();
+//         Payroll::truncate();
+//         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $employees = Employee::inRandomOrder()->take(20)->get();
+//         $employees = Employee::all();
 
-        foreach ($employees as $employee) {
-            $payroll = Payroll::factory()->create([
-                'employee_id' => $employee->id,
-                'month' => now()->month,
-                'year' => now()->year,
-            ]);
+//         foreach ($employees as $employee) {
+//             // create payrolls for the last 2 months
+//             for ($i = 0; $i < 2; $i++) {
+//                 $month = now()->subMonths($i)->format('Y-m');
 
-            // create a few payroll items
-            PayrollItem::factory()->count(3)->create(['payroll_id' => $payroll->id]);
-        }
-    }
-}
+//                 Payroll::factory()->create([
+//                     'employee_id' => $employee->id,
+//                     'month' => $month,
+//                 ]);
+//             }
+//         }
+//     }
+// }

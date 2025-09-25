@@ -34,7 +34,7 @@ class AttendanceController extends Controller
 
         // Calculate total hours for the filtered period
         $totalHours = (float)$query->clone()
-            ->sum('total_hours');
+            ->sum(DB::raw('total_hours'));
 
         // Get records with calculated fields
         $records = $query->get()->map(function ($attendance) {
@@ -45,7 +45,7 @@ class AttendanceController extends Controller
                 'check_in' => $attendance->check_in_at,
                 'check_out' => $attendance->check_out_at,
                 'total_hours' => (float)$attendance->total_hours,
-                'status' => $this->calculateStatus($attendance),
+                'status' => $attendance->status,
                 'employee' => $attendance->employee ? [
                     'name' => $attendance->employee->name,
                     'department' => $attendance->employee->department
@@ -98,64 +98,64 @@ class AttendanceController extends Controller
         return 'present';
     }
 
-    public function exportCsv(Request $request)
-    {
-        $fileName = 'attendance_' . now()->format('Y-m-d') . '.csv';
+    // public function exportCsv(Request $request)
+    // {
+    //     $fileName = 'attendance_' . now()->format('Y-m-d') . '.csv';
 
-        return new StreamedResponse(function () use ($request) {
-            $handle = fopen('php://output', 'w');
+    //     return new StreamedResponse(function () use ($request) {
+    //         $handle = fopen('php://output', 'w');
 
-            // Write CSV headers with UTF-8 BOM for Excel compatibility
-            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
-            fputcsv($handle, [
-                'Nhân viên',
-                'Phòng ban',
-                'Ngày',
-                'Giờ vào',
-                'Giờ ra',
-                'Tổng giờ',
-                'Trạng thái'
-            ]);
+    //         // Write CSV headers with UTF-8 BOM for Excel compatibility
+    //         fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+    //         fputcsv($handle, [
+    //             'Nhân viên',
+    //             'Phòng ban',
+    //             'Ngày',
+    //             'Giờ vào',
+    //             'Giờ ra',
+    //             'Tổng giờ',
+    //             'Trạng thái'
+    //         ]);
 
-            $query = Attendance::with(['employee.department'])
-                ->when($request->filled('startDate'), function ($query) use ($request) {
-                    return $query->whereDate('date', '>=', $request->input('startDate'));
-                })
-                ->when($request->filled('endDate'), function ($query) use ($request) {
-                    return $query->whereDate('date', '<=', $request->input('endDate'));
-                });
+    //         $query = Attendance::with(['employee.department'])
+    //             ->when($request->filled('startDate'), function ($query) use ($request) {
+    //                 return $query->whereDate('date', '>=', $request->input('startDate'));
+    //             })
+    //             ->when($request->filled('endDate'), function ($query) use ($request) {
+    //                 return $query->whereDate('date', '<=', $request->input('endDate'));
+    //             });
 
-            foreach ($query->cursor() as $record) {
-                $status = $this->calculateStatus($record);
-                $totalHours = $record->check_out
-                    ? Carbon::parse($record->check_in)->diffInHours(Carbon::parse($record->check_out))
-                    : null;
+    //         foreach ($query->cursor() as $record) {
+    //             $status = $this->calculateStatus($record);
+    //             $totalHours = $record->check_out
+    //                 ? Carbon::parse($record->check_in)->diffInHours(Carbon::parse($record->check_out))
+    //                 : null;
 
-                $statusText = [
-                    'present' => 'Đúng giờ',
-                    'late' => 'Đi muộn',
-                    'early_leave' => 'Về sớm',
-                    'absent' => 'Vắng mặt',
-                ][$status] ?? '';
+    //             $statusText = [
+    //                 'present' => 'Đúng giờ',
+    //                 'late' => 'Đi muộn',
+    //                 'early_leave' => 'Về sớm',
+    //                 'absent' => 'Vắng mặt',
+    //             ][$status] ?? '';
 
-                fputcsv($handle, [
-                    $record->employee->name ?? '',
-                    $record->employee->department->name ?? '',
-                    Carbon::parse($record->date)->format('d/m/Y'),
-                    $record->check_in ? Carbon::parse($record->check_in)->format('H:i') : '',
-                    $record->check_out ? Carbon::parse($record->check_out)->format('H:i') : '',
-                    $totalHours ? number_format($totalHours, 1) : '',
-                    $statusText,
-                ]);
-            }
+    //             fputcsv($handle, [
+    //                 $record->employee->name ?? '',
+    //                 $record->employee->department->name ?? '',
+    //                 Carbon::parse($record->date)->format('d/m/Y'),
+    //                 $record->check_in ? Carbon::parse($record->check_in)->format('H:i') : '',
+    //                 $record->check_out ? Carbon::parse($record->check_out)->format('H:i') : '',
+    //                 $totalHours ? number_format($totalHours, 1) : '',
+    //                 $statusText,
+    //             ]);
+    //         }
 
-            fclose($handle);
-        }, 200, [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
-            'Cache-Control' => 'no-cache, must-revalidate',
-        ]);
-    }
+    //         fclose($handle);
+    //     }, 200, [
+    //         'Content-Type' => 'text/csv',
+    //         'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+    //         'Cache-Control' => 'no-cache, must-revalidate',
+    //     ]);
+    // }
 
     public function store(Request $request)
     {

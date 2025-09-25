@@ -69,11 +69,11 @@ export default function Attendance({ records = [], totalHours = 0, startDate, en
 
     const formatTime = (time: string | null) => {
         if (!time) return '—';
-        return new Date(time).toLocaleTimeString('vi-VN', {
-            hour: '2-digit',
-            minute: '2-digit',
-        });
+        const date = new Date(time);
+        return date.getUTCHours().toString().padStart(2, '0') + ':' +
+            date.getUTCMinutes().toString().padStart(2, '0');
     };
+
 
     return (
         <AdminLayout>

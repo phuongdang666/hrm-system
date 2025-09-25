@@ -13,9 +13,14 @@ class Payroll extends Model
     protected $fillable = [
         'employee_id',
         'month',
-        'year',
-        'gross',
-        'net',
+        'base_salary',
+        'total_worked_hours',
+        'total_overtime_hours',
+        'unpaid_leave_days',
+        'net_salary',
+        'status',
+        'created_by',
+        'updated_by'
     ];
 
     public function employee()
@@ -23,8 +28,4 @@ class Payroll extends Model
         return $this->belongsTo(Employee::class);
     }
 
-    public function items()
-    {
-        return $this->hasMany(PayrollItem::class);
-    }
 }
