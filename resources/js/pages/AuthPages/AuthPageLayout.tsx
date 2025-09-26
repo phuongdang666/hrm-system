@@ -17,18 +17,17 @@ export default function AuthLayout({
 
             <GridShape />
             <div className="flex flex-col items-center max-w-xs">
-              {/* <Link href="/" className="block mb-4"> 
                 <img
-                  width={231}
-                  height={48}
-                  src="/images/logo/auth-logo.svg"
-                  alt="Logo"
+                  className=" dark:block h-10 object-contain"
+                  src="https://www.secomus.com/wp-content/uploads/2022/11/Secomus-logo-3.png"
+                alt="Secomus Technology"
+                style={{ width: 200 , height: 'auto'}}
+                
                 />
-              </Link>
+
               <p className="text-center text-gray-400 dark:text-white/60">
-                Free and Open-Source Tailwind CSS Admin Dashboard Template
-              </p> */}
-              {/* external auth page logo removed; sidebar will be the only logo shown */}
+                Welcome to Secomus HRM System
+              </p>
             </div>
           </div>
         </div>

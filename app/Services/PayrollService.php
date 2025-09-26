@@ -33,7 +33,7 @@ class PayrollService
             ->where('status', 'approved')
             ->count();
 
-        $salary = $employee->base_salary
+        $salary = ($workedHours * $hourlyRate)
                 + ($otHours * $hourlyRate * self::OT_MULTIPLIER)
                 - ($unpaidDays * 8 * $hourlyRate);
 

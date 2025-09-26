@@ -19,7 +19,7 @@ export default function SignInEmployeeForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    post('/employee/login'); // Gửi request đến route login
+    post('/employee/login'); 
   };
 
   return (
@@ -174,7 +174,7 @@ export default function SignInEmployeeForm() {
                 </div>
               </div>
             </form>
-
+{/* 
             <div className="mt-5">
               <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
                 Don&apos;t have an account? {""}
@@ -185,7 +185,7 @@ export default function SignInEmployeeForm() {
                   Sign Up
                 </Link>
               </p>
-            </div>
+            </div> */}
             <div className="mt-5">
               <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
                 You are manager? {""}

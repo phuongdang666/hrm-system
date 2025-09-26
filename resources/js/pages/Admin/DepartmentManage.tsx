@@ -481,7 +481,7 @@ export default function DepartmentManage({ departments = { data: [] }, employees
                                                     <TableCell className="text-right">
                                                         <Button
                                                             onClick={() => handleRemoveEmployee(emp.id)}
-                                                            className="text-sm text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-1 rounded-md transition-colors inline-flex items-center gap-1"
+                                                            className=" text-sm text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-1 rounded-md transition-colors inline-flex items-center gap-1"
                                                         >
                                                             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                                                 <path d="M13 7L9 11L13 15M9 11H21M21 11V11" />

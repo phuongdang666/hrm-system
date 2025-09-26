@@ -38,15 +38,16 @@ class PayrollController extends Controller
                     'base_salary' => $payroll->base_salary,
                     'total_overtime_hours' => $payroll->total_overtime_hours,
                     'unpaid_leave_days' => $payroll->unpaid_leave_days,
-                    'net_salary' => $payroll->net_salary,
-                    'status' => $payroll->status,
+                    'net_salary' => $payroll->net_salary,                
                 ];
             });
 
 
         return Inertia::render('Admin/Payroll', [
             'payrolls' => $payrolls,
-            'month' => $month,
+            'filters' => [
+                'month' => $month,
+            ],  
         ]);
     }
 
