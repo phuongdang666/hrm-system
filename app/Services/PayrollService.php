@@ -2,51 +2,60 @@
 namespace App\Services;
 
 use App\Models\Employee;
-use App\Models\Attendance;
-use App\Models\LeaveRequest;
-use App\Models\Payroll;
-use Carbon\Carbon;
+use App\Repositories\Contracts\AttendanceRepositoryInterface;
+use App\Repositories\Contracts\LeaveRequestRepositoryInterface;
+use App\Repositories\Contracts\PayrollRepositoryInterface;
 
 class PayrollService
 {
     const WORKING_HOURS_PER_MONTH = 160;
-    const OT_MULTIPLIER = 1.5;
+    const WORKING_HOURS_PER_DAY   = 8;
+    const OT_MULTIPLIER           = 1.5;
 
-    public function generate(Employee $employee, string $month)
+    public function __construct(
+        private AttendanceRepositoryInterface $attendanceRepo,
+        private LeaveRequestRepositoryInterface $leaveRepo,
+        private PayrollRepositoryInterface $payrollRepo
+    ) {}
+
+    public function generatePayrolls(string $month)
     {
-        $start = Carbon::parse($month)->startOfMonth();
-        $end   = Carbon::parse($month)->endOfMonth();
+        $employees     = Employee::all();
+        $attendances   = $this->attendanceRepo->getMonthlyData($month);
+        $leaveRequests = $this->leaveRepo->getMonthlyData($month);
 
+        foreach ($employees as $employee) {
+            $this->generate(
+                $employee,
+                $month,
+                $attendances[$employee->id] ?? null,
+                $leaveRequests[$employee->id] ?? null
+            );
+        }
+    }
+
+    private function generate(Employee $employee, string $month, $attendance = null, $leaveRequest = null)
+    {
         $hourlyRate = $employee->base_salary / self::WORKING_HOURS_PER_MONTH;
 
-        $workedHours = Attendance::where('employee_id', $employee->id)
-            ->whereBetween('date', [$start, $end])
-            ->sum('regular_hours');
-
-        $otHours = Attendance::where('employee_id', $employee->id)
-            ->whereBetween('date', [$start, $end])
-            ->sum('overtime_hours');
-
-        $unpaidDays = LeaveRequest::where('employee_id', $employee->id)
-            ->whereBetween('start_date', [$start, $end])
-            ->where('type', 'unpaid')
-            ->where('status', 'approved')
-            ->count();
+        $workedHours = $attendance->worked_hours ?? 0;
+        $otHours     = $attendance->ot_hours ?? 0;
+        $unpaidDays  = $leaveRequest->unpaid_days ?? 0;
 
         $salary = ($workedHours * $hourlyRate)
                 + ($otHours * $hourlyRate * self::OT_MULTIPLIER)
-                - ($unpaidDays * 8 * $hourlyRate);
+                - ($unpaidDays * self::WORKING_HOURS_PER_DAY * $hourlyRate);
 
-        return Payroll::updateOrCreate(
+        return $this->payrollRepo->updateOrCreate(
             ['employee_id' => $employee->id, 'month' => $month],
             [
-                'base_salary' => $employee->base_salary,
-                'total_worked_hours' => $workedHours,
+                'base_salary'          => $employee->base_salary,
+                'total_worked_hours'   => $workedHours,
                 'total_overtime_hours' => $otHours,
-                'unpaid_leave_days' => $unpaidDays,
-                'net_salary' => round($salary, 2),
-                
+                'unpaid_leave_days'    => $unpaidDays,
+                'net_salary'           => round($salary, 2),
             ]
         );
     }
 }
+

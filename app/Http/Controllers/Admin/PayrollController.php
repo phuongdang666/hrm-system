@@ -38,7 +38,7 @@ class PayrollController extends Controller
                     'base_salary' => $payroll->base_salary,
                     'total_overtime_hours' => $payroll->total_overtime_hours,
                     'unpaid_leave_days' => $payroll->unpaid_leave_days,
-                    'net_salary' => $payroll->net_salary,                
+                    'net_salary' => $payroll->net_salary,
                 ];
             });
 
@@ -47,7 +47,7 @@ class PayrollController extends Controller
             'payrolls' => $payrolls,
             'filters' => [
                 'month' => $month,
-            ],  
+            ],
         ]);
     }
 
@@ -57,15 +57,11 @@ class PayrollController extends Controller
             'month' => 'required|date_format:Y-m',
         ]);
 
-        $month = $request->month;
-        $employees = Employee::with('attendances')->get();
-
-        foreach ($employees as $employee) {
-            $this->payrollService->generate($employee, $month);
-        }
+        $this->payrollService->generatePayrolls($request->month);
 
         return back()->with('success', 'Payrolls generated successfully.');
     }
+
 
     public function show(Payroll $payroll)
     {

@@ -28,7 +28,20 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind('guest.admin', \App\Http\Middleware\RedirectIfAdmin::class);
         $this->app->bind('guest.employee', \App\Http\Middleware\RedirectIfEmployee::class);
         $this->app->bind('role', \App\Http\Middleware\CheckRole::class);
-        
+
+        // Repositories
+        $this->app->bind(
+            \App\Repositories\Contracts\AttendanceRepositoryInterface::class,
+            \App\Repositories\AttendanceRepository::class   
+        );
+        $this->app->bind(
+            \App\Repositories\Contracts\LeaveRequestRepositoryInterface::class,
+            \App\Repositories\LeaveRequestRepository::class
+        );
+        $this->app->bind(
+            \App\Repositories\Contracts\PayrollRepositoryInterface::class,
+            \App\Repositories\PayrollRepository::class
+        );
     }
 
     /**
