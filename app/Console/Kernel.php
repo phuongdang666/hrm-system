@@ -12,7 +12,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('notify:employee-birthday')->everyMinute();
+        $schedule->command('notify:employee-birthday')
+                    ->DailyAt('08:00')
+                    ->timezone('Asia/Ho_Chi_Minh')
+                    ->withoutOverlapping()
+                    ->runInBackground();
     }
 
 

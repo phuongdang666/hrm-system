@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Admin;
+use App\Http\Requests\Auth\LoginRequest;
 
 class AdminLoginController extends Controller
 {
@@ -26,6 +27,7 @@ class AdminLoginController extends Controller
         ]);
 
         if (Auth::guard('admin')->attempt($credentials)) {
+            // $request->authenticate();
             $request->session()->regenerate();
             return redirect()->intended('/admin/dashboard');
         }
