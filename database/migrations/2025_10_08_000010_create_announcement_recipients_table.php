@@ -6,12 +6,8 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        if (!Schema::hasTable('announcement_recipients')) {
             Schema::create('announcement_recipients', function (Blueprint $table) {
                 $table->id();
                 // use unsignedBigInteger for announcement_id to avoid FK errors during partial migrations
@@ -24,15 +20,12 @@ return new class extends Migration
                 $table->timestamp('read_at')->nullable();
                 $table->enum('status', ['pending', 'sent', 'failed'])->default('pending');
                 $table->timestamps();
+                
                 $table->index(['announcement_id']);
                 $table->index(['employee_id']);
             });
-        }
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('announcement_recipients');

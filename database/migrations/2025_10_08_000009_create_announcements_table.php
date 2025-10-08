@@ -6,12 +6,8 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        if (!Schema::hasTable('announcements')) {
             Schema::create('announcements', function (Blueprint $table) {
                 $table->id();
                 $table->string('title');
@@ -20,13 +16,12 @@ return new class extends Migration
                 $table->timestamp('sent_at')->nullable();
                 $table->json('meta')->nullable();
                 $table->timestamps();
+
+                $table->index(['sender_id']);
+                
             });
-        }
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('announcements');
