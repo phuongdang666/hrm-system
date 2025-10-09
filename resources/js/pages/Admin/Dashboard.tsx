@@ -1,11 +1,11 @@
 // resources/js/pages/Home.tsx
 import React from "react";
-import PageMeta from "@/components/common/PageMeta";
+import PageMeta from "@/Components/common/PageMeta";
 import AdminLayout from "@/layouts/admin/AdminLayout";
-import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
-import Button from "@/components/ui/button/Button";
-import Badge from "@/components/ui/badge/Badge";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/Components/ui/card";
+import Button from "@/Components/ui/button/Button";
+import Badge from "@/Components/ui/badge/Badge";
+import PageBreadcrumb from "@/Components/common/PageBreadCrumb";
 
 export default function Dashboard() {
   // Placeholder stats — in a real app these would be fetched from API

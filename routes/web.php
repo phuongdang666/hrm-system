@@ -41,10 +41,11 @@ Route::prefix('admin')->middleware(['auth.admin'])->group(function () {
 
     // Department routes
     Route::resource('departments', DepartmentController::class)->names('admin.departments');
-    Route::post('departments/{department}/employees', [DepartmentController::class, 'addEmployee'])
-        ->name('admin.departments.add-employees');
-    Route::delete('departments/{department}/employees/{employee}', [DepartmentController::class, 'removeEmployee'])
-        ->name('admin.departments.remove-employee');
+    Route::post('/departments', [DepartmentController::class, 'store'])->name('admin.departments.store');
+    Route::post('/departments/{department}/add-employee', [DepartmentController::class, 'addEmployee'])->name('admin.departments.employees.add');
+    Route::post('/departments/{department}/set-manager', [DepartmentController::class, 'setManager'])->name('admin.departments.manager.set');
+    Route::delete('/departments/{department}/remove-employee/{employee}', [DepartmentController::class, 'removeEmployee'])->name('admin.departments.employees.remove');
+    
 
     // Attendance routes
     Route::resource('attendances', AttendanceController::class)->only(['index', 'update'])->names('admin.attendances');

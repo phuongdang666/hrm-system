@@ -1,14 +1,14 @@
 import React from "react";
 import AdminLayout from "@/layouts/admin/AdminLayout";
-import PageMeta from "@/components/common/PageMeta";
+import PageMeta from "@/Components/common/PageMeta";
 import {
   Card,
   CardHeader,
   CardContent,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button"; // ✅ sửa import
+} from "@/Components/ui/card";
+import { Button } from "@/components/ui/button"; 
 import { format } from "date-fns";
 
 interface Payroll {

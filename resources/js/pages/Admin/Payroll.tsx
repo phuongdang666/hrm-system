@@ -1,11 +1,11 @@
 import React from 'react';
 import { useForm, Link } from '@inertiajs/react';
 import AdminLayout from "@/layouts/admin/AdminLayout";
-import PageMeta from "@/components/common/PageMeta";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import { Table, TableHeader, TableRow, TableCell, TableBody } from "@/components/ui/table";
-import Button from "@/components/ui/button/Button";
+import PageMeta from "@/Components/common/PageMeta";
+import PageBreadcrumb from "@/Components/common/PageBreadCrumb";
+import { Card, CardHeader, CardContent, CardTitle } from "@/Components/ui/card";
+import { Table, TableHeader, TableRow, TableCell, TableBody } from "@/Components/ui/table";
+import Button from "@/Components/ui/button/Button";
 
 interface Payroll {
     id: number;

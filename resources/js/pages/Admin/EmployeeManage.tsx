@@ -4,11 +4,11 @@ import { RouteFunction } from "@/types/ziggy";
 
 declare const route: RouteFunction;
 import AdminLayout from "@/layouts/admin/AdminLayout";
-import PageMeta from "@/components/common/PageMeta";
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import Button from "@/components/ui/button/Button";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import { Table, TableHeader, TableRow, TableCell, TableBody } from "@/components/ui/table";
+import PageMeta from "@/Components/common/PageMeta";
+import { Card, CardHeader, CardContent, CardTitle } from "@/Components/ui/card";
+import Button from "@/Components/ui/button/Button";
+import PageBreadcrumb from "@/Components/common/PageBreadCrumb";
+import { Table, TableHeader, TableRow, TableCell, TableBody } from "@/Components/ui/table";
 import Modal from "../../Components/Modal";
 import EmployeeForm from "../../Components/Forms/EmployeeForm";
 
