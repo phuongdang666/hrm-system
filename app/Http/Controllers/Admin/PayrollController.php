@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\Payroll;
 use App\Services\PayrollService;
+use App\Mail\PayrollGenerated;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class PayrollController extends Controller

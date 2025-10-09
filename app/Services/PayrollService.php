@@ -1,10 +1,12 @@
 <?php
 namespace App\Services;
 
+use App\Mail\PayrollGenerated;
 use App\Models\Employee;
 use App\Repositories\Contracts\AttendanceRepositoryInterface;
 use App\Repositories\Contracts\LeaveRequestRepositoryInterface;
 use App\Repositories\Contracts\PayrollRepositoryInterface;
+use Illuminate\Support\Facades\Mail;
 
 class PayrollService
 {
@@ -46,7 +48,7 @@ class PayrollService
                 + ($otHours * $hourlyRate * self::OT_MULTIPLIER)
                 - ($unpaidDays * self::WORKING_HOURS_PER_DAY * $hourlyRate);
 
-        return $this->payrollRepo->updateOrCreate(
+        $payroll = $this->payrollRepo->updateOrCreate(
             ['employee_id' => $employee->id, 'month' => $month],
             [
                 'base_salary'          => $employee->base_salary,
@@ -56,6 +58,11 @@ class PayrollService
                 'net_salary'           => round($salary, 2),
             ]
         );
+
+        // Send email notification to employee
+        Mail::to($employee->email)->queue(new PayrollGenerated($payroll));
+
+        return $payroll;
     }
 }
 
