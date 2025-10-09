@@ -5,9 +5,13 @@ namespace App\Http\Controllers\Employee;
 use App\Http\Controllers\Controller;
 use App\Models\LeaveRequest;
 use App\Models\Employee;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Requests\Employee\LeaveRequest as LeaveRequestForm;
+use App\Mail\NewLeaveRequestNotification;
+use App\Mail\LeaveRequestStatusUpdated;
+use Illuminate\Support\Facades\Mail;
 
 
 class LeaveRequestController extends Controller
@@ -42,7 +46,8 @@ class LeaveRequestController extends Controller
     {
         $validated = $request->validated();
         $employee = auth('employee')->user();
-        LeaveRequest::create([
+        
+        $leaveRequest = LeaveRequest::create([
             'employee_id'   => $employee->id,
             'department_id' => $employee->department_id,
             'type'          => $validated['type'],
@@ -52,6 +57,21 @@ class LeaveRequestController extends Controller
             'reason'        => $validated['reason'],
             'status'        => 'pending',
         ]);
+
+        // Get department manager's email
+        $manager = Employee::where('department_id', $employee->department_id)
+            ->where('role', 'manager')
+            ->first();
+
+        // Send email notification to manager if exists
+        if ($manager && $manager->email) {
+            try {
+                Mail::to($manager->email)->queue(new NewLeaveRequestNotification($leaveRequest));
+            } catch (\Exception $e) {
+                // Log the error but don't stop the process
+                \Log::error('Failed to send leave request notification email: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->back()->with('success', 'Leave request submitted successfully.');
     }
@@ -73,6 +93,14 @@ class LeaveRequestController extends Controller
             'status' => $validated['status'],
             'processed_by' => $manager->id,
         ]);
+
+        // Send email notification to employee
+        try {
+            Mail::to($leaveRequest->employee->email)
+                ->queue(new LeaveRequestStatusUpdated($leaveRequest->fresh()->load('employee'), $manager));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send leave request status update email: ' . $e->getMessage());
+        }
 
         return redirect()->back()->with('success', 'Leave request updated successfully.');
     }

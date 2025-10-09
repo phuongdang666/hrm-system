@@ -71,13 +71,15 @@ Route::prefix('employee')->middleware(['auth.employee'])->group(function () {
     Route::get('/leave-requests', [LeaveRequestController::class, 'index'])
         // ->middleware('role:staff')
         ->name('employee.leave-requests');
-    Route::post('/leave-requests', [LeaveRequestController::class, 'store'])->middleware('role:staff')->name('employee.leave-requests.store');
+    Route::post('/leave-requests', [LeaveRequestController::class, 'store'])
+    ->middleware('role:staff')->name('employee.leave-requests.store');
 
     // Leave Request routes for manager
     Route::get('/leave-requests', [LeaveRequestController::class, 'index'])
         // ->middleware('role:manager')
         ->name('employee.leave-requests.manage');
-    Route::patch('/leave-requests/{leaveRequest}/status', [LeaveRequestController::class, 'updateStatus'])->middleware('role:manager')->name('employee.leave-requests.update-status');
+    Route::patch('/leave-requests/{leaveRequest}/status', [LeaveRequestController::class, 'updateStatus'])
+    ->middleware('role:manager')->name('employee.leave-requests.update-status');
 });
 
 

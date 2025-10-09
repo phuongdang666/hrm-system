@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
 import EmployeeLayout from '@/layouts/employee/EmployeeLayout';
-import PageMeta from '@/components/common/PageMeta';
-import PageBreadcrumb from '@/components/common/PageBreadCrumb';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Button from '@/components/ui/button/Button';
-
-import AvatarUpload from '@/components/employee/AvatarUpload';
+import PageMeta from '@/Components/common/PageMeta';
+import PageBreadcrumb from '@/Components/common/PageBreadCrumb';
+import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
+import Button from '@/Components/ui/button/Button';
+import AvatarUpload from '@/Components/employee/AvatarUpload';
 
 interface Props {
     employee: {

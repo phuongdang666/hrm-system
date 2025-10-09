@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { PageProps } from '@/types';
-import Button from "@/components/ui/button/Button";
+import Button from "@/Components/ui/button/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/Components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from "@/Components/ui/textarea";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
 import EmployeeLayout from '@/layouts/employee/EmployeeLayout';
-import PageMeta from '@/components/common/PageMeta';
-import { format } from 'date-fns';
+import PageMeta from '@/Components/common/PageMeta';
+import { format, set } from 'date-fns';
+import { router } from "@inertiajs/react";
 
 interface LeaveRequest {
     id: number;
@@ -60,20 +61,36 @@ export default function LeaveRequest({ leaveRequests, userRole, departmentMember
         });
     };
 
-    const handleStatusUpdate = (leaveRequestId: number, status: 'approved' | 'rejected') => {
-        // First update the form data
-        statusForm.setData('status', status);
+    // const handleStatusUpdate = (leaveRequestId: number, status: 'approved' | 'rejected') => {
+    //     console.log("Updating status to:", status);
 
-        // Then submit the form
-        statusForm.submit('patch', route('employee.leave-requests.update-status', leaveRequestId), {
+    //     // First update the form data
+    //     // statusForm.setData('status', status);
+    //     // console.log("Updating status to:", status);
+
+    //     setTimeout  (() => {
+    //     // Then submit the form
+    //     statusForm.submit('patch', route('employee.leave-requests.update-status', leaveRequestId), {
+    //         data: { status },
+    //         preserveScroll: true,
+    //         onSuccess: () => {
+    //             console.log("Status updated successfully");
+    //             // window.location.reload();
+    //         },
+    //         onError: (errors) => {
+    //             console.error("Failed to update status", errors);
+    //         },
+    //     });
+    // }, 0);
+    // };
+
+    const handleStatusUpdate = (leaveRequestId: number, status: 'approved' | 'rejected') => {
+        router.visit(route('employee.leave-requests.update-status', leaveRequestId), {
+            method: 'patch',
+            data: { status },
             preserveScroll: true,
-            onSuccess: () => {
-                console.log("Status updated successfully");
-                window.location.reload();
-            },
-            onError: (errors) => {
-                console.error("Failed to update status", errors);
-            },
+            onSuccess: () => console.log('Status updated successfully'),
+            onError: (errors) => console.error('Failed to update status', errors),
         });
     };
 
