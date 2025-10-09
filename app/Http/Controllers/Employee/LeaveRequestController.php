@@ -40,16 +40,16 @@ class LeaveRequestController extends Controller
 
     public function store(LeaveRequestForm $request)
     {
-        $request = $request->validated();
+        $validated = $request->validated();
         $employee = auth('employee')->user();
         LeaveRequest::create([
             'employee_id'   => $employee->id,
             'department_id' => $employee->department_id,
-            'type'          => $request->type,
-            'start_date'    => $request->start_date,
-            'end_date'      => $request->end_date,
-            'days'          => (new \DateTime($request->end_date))->diff(new \DateTime($request->start_date))->days + 1,
-            'reason'        => $request->reason,
+            'type'          => $validated['type'],
+            'start_date'    => $validated['start_date'],
+            'end_date'      => $validated['end_date'],
+            'days'          => (new \DateTime($validated['end_date']))->diff(new \DateTime($validated['start_date']))->days + 1,
+            'reason'        => $validated['reason'],
             'status'        => 'pending',
         ]);
 

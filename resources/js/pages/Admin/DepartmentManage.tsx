@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useForm } from "@inertiajs/react";
 import AdminLayout from "@/layouts/admin/AdminLayout";
-import PageMeta from "@/components/common/PageMeta";
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import Button from "@/components/ui/button/Button";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import { Table, TableHeader, TableRow, TableCell, TableBody } from "@/components/ui/table";
+import PageMeta from "@/Components/common/PageMeta";
+import { Card, CardHeader, CardContent, CardTitle } from "@/Components/ui/card";
+import Button from "@/Components/ui/button/Button";
+import PageBreadcrumb from "@/Components/common/PageBreadCrumb";
+import { Table, TableHeader, TableRow, TableCell, TableBody } from "@/Components/ui/table";
 import Modal from "../../Components/Modal";
 import InputError from "../../Components/InputError";
 import InputLabel from "../../Components/InputLabel";
@@ -14,7 +14,7 @@ import SelectInput from "../../Components/SelectInput";
 import SecondaryButton from "../../Components/SecondaryButton";
 
 type ModalMaxWidth = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-import AssignEmployeesModal from "@/components/departments/AssignEmployeesModal";
+import AssignEmployeesModal from "@/Components/departments/AssignEmployeesModal";
 
 interface Department {
     id: number;

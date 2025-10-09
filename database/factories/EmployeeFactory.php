@@ -21,7 +21,7 @@ class EmployeeFactory extends Factory
             'join_date' => $this->faker->dateTimeBetween('-5 years', 'now')->format('Y-m-d'),
             'birth_date' => $this->faker->dateTimeBetween('-50 years', '-20 years')->format('Y-m-d'),
             'status' => 'active',
-            'avatar_path' => null,
+            'avatar' => null,
             'meta' => null,
         ];
     }

@@ -12,6 +12,8 @@ use App\Http\Controllers\Employee\ProfileController;
 use App\Http\Controllers\Employee\LeaveRequestController;
 use App\Http\Controllers\Admin\PayrollController;
 
+Route::get('/', [AdminLoginController::class, 'showLoginForm'])->name('home');
+
 Route::prefix('admin')->middleware('guest.admin')->group(function () {
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AdminLoginController::class, 'login']);
