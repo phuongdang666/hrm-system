@@ -1,9 +1,10 @@
 import React from 'react';
 import AdminLayout from '@/layouts/admin/AdminLayout';
-import PageMeta from '@/components/common/PageMeta';
-import PageBreadcrumb from '@/components/common/PageBreadCrumb';
-import { Card, CardContent, CardTitle } from '@/components/ui/card';
+import PageMeta from '@/Components/common/PageMeta';
+import PageBreadcrumb from '@/Components/common/PageBreadCrumb';
+import { Card, CardContent, CardTitle } from '@/Components/ui/card';
 import { Link } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
 
 export default function Show({ announcement }: any) {
     return (
@@ -30,6 +31,14 @@ export default function Show({ announcement }: any) {
                     </div>
                 </CardContent>
             </Card>
+            <div className="flex justify-end">
+                <Button
+                    onClick={() => window.history.back()}
+                    variant="outline"
+                >
+                    Back
+                </Button>
+            </div>
         </AdminLayout>
     );
 }
