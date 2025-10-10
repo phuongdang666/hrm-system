@@ -21,7 +21,12 @@ class EmployeeRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:employees,email' . ($employeeId ? ",$employeeId" : '')],
             'password' => [$employeeId ? 'nullable' : 'required', 'string', 'min:6'],
-            'phone' => ['nullable', 'string', 'max:20'],
+            'phone' => [
+                'nullable',
+                'string',
+                'max:20',
+                'regex:/^([0-9\s\-\+\(\)]*)$/'
+            ],
             'address' => ['nullable', 'string', 'max:500'],
             'department_id' => ['nullable', 'exists:departments,id'],
             'title_id' => ['nullable', 'exists:titles,id'],

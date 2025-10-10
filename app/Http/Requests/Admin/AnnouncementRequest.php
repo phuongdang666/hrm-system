@@ -11,7 +11,7 @@ class AnnouncementRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'body' => 'required|string',
+            'body' => 'required|string|max:5000',
             'departments' => 'array',
             'departments.*' => 'integer|exists:departments,id',
             'titles' => 'array',

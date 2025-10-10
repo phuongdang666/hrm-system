@@ -136,9 +136,10 @@ export default function EmployeeProfile({ employee }: Props) {
                                             <input
                                                 type="text"
                                                 id="name"
+                                                disabled
                                                 value={form.data.name}
                                                 onChange={e => form.setData('name', e.target.value)}
-                                                className="mt-1 w-full px-4 py-2 border border-blue-100 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400"
+                                                className="mt-1 w-full px-4 py-2 border border-blue-100 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400 cursor-not-allowed "
                                             />
                                             {form.errors.name && (
                                                 <div className="mt-1 text-sm text-red-600">{form.errors.name}</div>

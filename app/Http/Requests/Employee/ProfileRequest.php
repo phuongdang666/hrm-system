@@ -34,18 +34,18 @@ class ProfileRequest extends FormRequest
             ],
         ];
     }
-
+    
     public function messages(): array
     {
         return [
             'name.required' => 'Please enter your full name.',
-            'email.required' => 'Please enter your email address.',
-            'email.email' => 'Please enter a valid email address.',
-            'email.unique' => 'This email is already in use.',
+            'name.max' => 'Full name must not exceed 255 characters.',
+            'phone.max' => 'Phone number must not exceed 20 characters.',
+            'phone.regex' => 'Phone number format is invalid.',
+            'address.max' => 'Address must not exceed 500 characters.',
+            'password.string' => 'Password must be a valid string.',
             'password.min' => 'Password must be at least 8 characters.',
             'password.confirmed' => 'Password confirmation does not match.',
-            'avatar.image' => 'The uploaded file must be an image.',
-            'avatar.max' => 'The uploaded image must not be larger than 2MB.'
         ];
     }
 }

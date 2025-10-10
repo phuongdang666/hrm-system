@@ -16,7 +16,7 @@ class StoreAttendanceRequest extends FormRequest
     {
         return [
             'employee_id' => 'required|exists:employees,id',
-            'date' => 'required|date_format:Y-m-d',
+            'date' => 'required|date_format:Y-m-d|after_or_equal:today',
             'check_in' => 'required|date_format:H:i',
             'check_out' => 'required|date_format:H:i|after:check_in',
             'overtime_hours' => 'nullable|numeric|min:0',
