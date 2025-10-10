@@ -76,7 +76,12 @@ export default function Attendance({ attendances, records, totalHours = 0, start
     });
 
     // Form for editing attendance
-    const editForm = useForm({
+    const editForm = useForm<{
+        date: string;
+        check_in: string;
+        check_out: string;
+        overtime_hours: string;
+    }>({
         date: '',
         check_in: '',
         check_out: '',
@@ -91,16 +96,17 @@ export default function Attendance({ attendances, records, totalHours = 0, start
 
     const handleEdit = (attendance: AttendanceRecord) => {
         setSelectedAttendance(attendance);
+        // Format date to YYYY-MM-DD
+        const formattedDate = new Date(attendance.date).toISOString().split('T')[0];
+
         editForm.setData({
-            date: attendance.date,
+            date: formattedDate,
             check_in: attendance.check_in.substring(11, 16), // Get HH:mm from timestamp
             check_out: attendance.check_out ? attendance.check_out.substring(11, 16) : '',
             overtime_hours: attendance.overtime_hours?.toString() || '',
         });
         setShowEditModal(true);
-    };
-
-    const form = useForm({
+    };    const form = useForm({
         startDate: startDate || '',
         endDate: endDate || '',
         employeeId: filters.employeeId || '',
@@ -193,17 +199,6 @@ export default function Attendance({ attendances, records, totalHours = 0, start
                                     ))}
                                 </select>
                             </div>
-                            {/* <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                                <select
-                                    value={viewType}
-                                    onChange={e => setViewType(e.target.value as 'daily' | 'monthly')}
-                                    className="w-full rounded-lg border-gray-300 text-sm"
-                                >
-                                    <option value="daily">Daily</option>
-                                    <option value="monthly">Monthy</option>
-                                </select>
-                            </div> */}
                             <div className="flex items-end">
                                 <Button
                                     type="submit"
@@ -564,10 +559,13 @@ export default function Attendance({ attendances, records, totalHours = 0, start
                         });
                     }} className="space-y-4 mt-4">
                         <div>
-                            <label>Date</label>
-                             <input type="date" value={editForm.data.date} onChange={e => editForm.setData('date', e.target.value)} />
-                                     {editForm.errors.date && (
-                         <div className="text-sm text-red-600 mt-1">{editForm.errors.date}</div> )}
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                            <input
+                                type="date"
+                                value={editForm.data.date}
+                                disabled
+                                className="w-full rounded-lg border-gray-300 text-sm bg-gray-50 cursor-not-allowed"
+                            />
                         </div>
                         
                         <div>
