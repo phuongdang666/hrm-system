@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -11,7 +10,8 @@ use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use App\Http\Requests\Admin\StoreAttendanceRequest;
+use App\Http\Requests\Admin\UpdateAttendanceRequest;
 
 class AttendanceController extends Controller
 {
@@ -106,73 +106,61 @@ class AttendanceController extends Controller
         return 'present';
     }
 
-public function store(Request $request)
-{
+    public function store(StoreAttendanceRequest $request)
+    {
+    $validated = $request->validated();
 
-    $validatedData = $request->validate([
-        'employee_id' => 'required|exists:employees,id',
-        'date' => 'required|date_format:Y-m-d', 
-        'check_in' => 'required|date_format:H:i', 
-        'check_out' => 'required|date_format:H:i|after:check_in', 
-        'overtime_hours' => 'nullable|numeric|min:0',
-    ]);
+    $checkInDateTime = Carbon::parse($validated['date'] . ' ' . $validated['check_in']);
+    $checkOutDateTime = Carbon::parse($validated['date'] . ' ' . $validated['check_out']);
 
-    $checkInDateTime = Carbon::parse($validatedData['date'] . ' ' . $validatedData['check_in']);
-    $checkOutDateTime = Carbon::parse($validatedData['date'] . ' ' . $validatedData['check_out']);
-   
     $regularHours = round($checkInDateTime->diffInMinutes($checkOutDateTime) / 60, 2);
-    $overtimeHours = $validatedData['overtime_hours'] ?? 0;
+    $overtimeHours = $validated['overtime_hours'] ?? 0;
     $status = $this->calculateStatus((object)[
         'check_in_at' => $checkInDateTime,
         'check_out_at' => $checkOutDateTime
     ]);
-    $attendance = Attendance::create([
-        'employee_id' => $validatedData['employee_id'],
-        'date' => $validatedData['date'],
-        'check_in_at' => $checkInDateTime,      
-        'check_out_at' => $checkOutDateTime,     
+
+
+    Attendance::create([
+        'employee_id' => $validated['employee_id'],
+        'date' => $validated['date'],
+        'check_in_at' => $checkInDateTime,
+        'check_out_at' => $checkOutDateTime,
         'regular_hours' => $regularHours,
         'overtime_hours' => $overtimeHours,
         'total_hours' => $regularHours + $overtimeHours,
         'status' => $status,
     ]);
 
-        return redirect()->back()->with('success', 'Attendance record created successfully.');
+    return redirect()->back()->with('success', 'Attendance record created successfully.');
     }
 
-    public function update(Request $request, Attendance $attendance)
-    {
-        $validatedData = $request->validate([
-            // 'employee_id' => 'required|exists:employees,id',
-            'date' => 'required|date_format:Y-m-d', 
-            'check_in' => 'required|date_format:H:i', 
-            'check_out' => 'required|date_format:H:i|after:check_in', 
-            'overtime_hours' => 'nullable|numeric|min:0',
-        ]);
+public function update(UpdateAttendanceRequest $request, Attendance $attendance)
+{
+    $validated = $request->validated();
 
-        $checkInDateTime = Carbon::parse($validatedData['date'] . ' ' . $validatedData['check_in']);
-        $checkOutDateTime = Carbon::parse($validatedData['date'] . ' ' . $validatedData['check_out']);
+    $checkInDateTime = Carbon::parse($validated['date'] . ' ' . $validated['check_in']);
+    $checkOutDateTime = Carbon::parse($validated['date'] . ' ' . $validated['check_out']);
 
-        $regularHours = round($checkInDateTime->diffInMinutes($checkOutDateTime) / 60, 2);
-        $overtimeHours = $validatedData['overtime_hours'] ?? 0;
-        $status = $this->calculateStatus((object)[
-            'check_in_at' => $checkInDateTime,
-            'check_out_at' => $checkOutDateTime
-        ]);
+    $regularHours = round($checkInDateTime->diffInMinutes($checkOutDateTime) / 60, 2);
+    $overtimeHours = $validated['overtime_hours'] ?? 0;
+    $status = $this->calculateStatus((object)[
+        'check_in_at' => $checkInDateTime,
+        'check_out_at' => $checkOutDateTime
+    ]);
 
-        $attendance->update([
-            // 'employee_id' => $validatedData['employee_id'],
-            // 'date' => $validatedData['date'],
-            'check_in_at' => $checkInDateTime,
-            'check_out_at' => $checkOutDateTime,
-            'regular_hours' => $regularHours,
-            'overtime_hours' => $overtimeHours,
-            'total_hours' => $regularHours + $overtimeHours,
-            'status' => $status,
-        ]);
+    $attendance->update([
+        'check_in_at' => $checkInDateTime,
+        'check_out_at' => $checkOutDateTime,
+        'regular_hours' => $regularHours,
+        'overtime_hours' => $overtimeHours,
+        'total_hours' => $regularHours + $overtimeHours,
+        'status' => $status,
+    ]);
 
-        return redirect()->back()->with('success', 'Attendance record updated successfully.');
-    }
+    return redirect()->back()->with('success', 'Attendance record updated successfully.');
+}
+
 
     public function destroy(Attendance $attendance)
     {
