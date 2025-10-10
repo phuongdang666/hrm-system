@@ -55,6 +55,7 @@ export default function EmployeeManage({ employees, filters = {}, departments = 
     const formData: any = form.data || {};
     const code = formData.code || "";
     const name = formData.name || "";
+    const email = formData.email || "";
     const departmentVal = formData.department || "";
     const titleVal = formData.title || "";
     const statusVal = formData.status ?? "";
@@ -113,6 +114,7 @@ export default function EmployeeManage({ employees, filters = {}, departments = 
                                 <TableRow className="bg-gray-50 border-t border-b border-gray-200">
                                     <TableCell isHeader className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Code</TableCell>
                                     <TableCell isHeader className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</TableCell>
+                                    <TableCell isHeader className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Email</TableCell>
                                     <TableCell isHeader className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Department</TableCell>
                                     <TableCell isHeader className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Title</TableCell>
                                     <TableCell isHeader className="px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</TableCell>
@@ -124,6 +126,7 @@ export default function EmployeeManage({ employees, filters = {}, departments = 
                                     <TableRow key={e.id} className="hover:bg-gray-50/80 transition-all duration-150 ease-in-out border-b border-gray-100 last:border-b-0">
                                         <TableCell className="px-4 py-3 text-gray-600">{e.code}</TableCell>
                                         <TableCell className="px-4 py-3 font-medium text-gray-900">{e.name}</TableCell>
+                                        <TableCell className="px-4 py-3 text-gray-600">{e.email}</TableCell>
                                         <TableCell className="px-4 py-3 text-gray-600">
                                             <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
                                                 {e.department?.name}

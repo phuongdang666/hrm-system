@@ -37,6 +37,7 @@ class AttendanceController extends Controller
         // Calculate total hours for the filtered period
         $totalHours = (float)$query->clone()
             ->sum(DB::raw('total_hours'));
+        
 
         // Get paginated records
         $paginator = $query->paginate(15);

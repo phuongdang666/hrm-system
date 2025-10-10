@@ -106,7 +106,7 @@ export default function Attendance({ attendances, records, totalHours = 0, start
             overtime_hours: attendance.overtime_hours?.toString() || '',
         });
         setShowEditModal(true);
-    };    const form = useForm({
+    }; const form = useForm({
         startDate: startDate || '',
         endDate: endDate || '',
         employeeId: filters.employeeId || '',
@@ -285,7 +285,7 @@ export default function Attendance({ attendances, records, totalHours = 0, start
                         >
                             Add Attendance
                         </Button>
-                    </CardHeader>   
+                    </CardHeader>
                     <CardContent>
                         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
                             <Table>
@@ -414,9 +414,9 @@ export default function Attendance({ attendances, records, totalHours = 0, start
                                         }
 
                                         return (
-                                            <Button 
+                                            <Button
                                                 key={i}
-                                            
+
                                                 size="sm"
                                                 onClick={() => {
                                                     if (link.url) {
@@ -424,8 +424,8 @@ export default function Attendance({ attendances, records, totalHours = 0, start
                                                     }
                                                 }}
                                                 className={`px-3 py-1 text-sm ${link.active
-                                                        ? 'bg-red-600 text-white hover:bg-red-700'
-                                                        : 'bg-blue-100 text-gray-500 hover:bg-red-700'
+                                                    ? 'bg-red-600 text-white hover:bg-red-700'
+                                                    : 'bg-blue-100 text-gray-500 hover:bg-red-700'
                                                     } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                 disabled={!link.url}
                                             >
@@ -567,7 +567,7 @@ export default function Attendance({ attendances, records, totalHours = 0, start
                                 className="w-full rounded-lg border-gray-300 text-sm bg-gray-50 cursor-not-allowed"
                             />
                         </div>
-                        
+
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Check In Time</label>
                             <input
