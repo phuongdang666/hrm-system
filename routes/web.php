@@ -48,7 +48,8 @@ Route::prefix('admin')->middleware(['auth.admin'])->group(function () {
     
 
     // Attendance routes
-    Route::resource('attendances', AttendanceController::class)->only(['index', 'update'])->names('admin.attendances');
+    Route::resource('attendances', AttendanceController::class)->names('admin.attendances');
+    //Route::resource('attendances', AttendanceController::class)->only(['index', 'update'])->names('admin.attendances');
     // Announcement routes
     Route::resource('announcements', AnnouncementController::class)->names('admin.announcements');
     // AJAX endpoints for announcements

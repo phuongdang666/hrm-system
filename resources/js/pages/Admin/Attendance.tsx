@@ -6,6 +6,13 @@ import PageBreadcrumb from "@/Components/common/PageBreadCrumb";
 import { Card, CardHeader, CardContent, CardTitle } from "@/Components/ui/card";
 import { Table, TableHeader, TableRow, TableCell, TableBody } from "@/Components/ui/table";
 import Button from "@/Components/ui/button/Button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 
 interface AttendanceRecord {
@@ -49,13 +56,49 @@ interface AttendanceProps {
         employeeId?: string;
         departmentId?: string;
     };
+
 }
 
 export default function Attendance({ attendances, records, totalHours = 0, startDate, endDate, employees = [], departments = [], filters = {} }: AttendanceProps) {
-
-
     const [viewType, setViewType] = useState<'daily' | 'monthly'>('daily');
     const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [selectedAttendance, setSelectedAttendance] = useState<AttendanceRecord | null>(null);
+
+    // Form for adding new attendance
+    const addForm = useForm({
+        employee_id: '',
+        date: new Date().toISOString().slice(0, 10),
+        check_in: '',
+        check_out: '',
+        overtime_hours: '',
+    });
+
+    // Form for editing attendance
+    const editForm = useForm({
+        date: '',
+        check_in: '',
+        check_out: '',
+        overtime_hours: '',
+    });
+
+    const handleDelete = (id: number) => {
+        if (confirm('Are you sure you want to delete this attendance record?')) {
+            form.delete(route('admin.attendances.destroy', id));
+        }
+    };
+
+    const handleEdit = (attendance: AttendanceRecord) => {
+        setSelectedAttendance(attendance);
+        editForm.setData({
+            date: attendance.date,
+            check_in: attendance.check_in.substring(11, 16), // Get HH:mm from timestamp
+            check_out: attendance.check_out ? attendance.check_out.substring(11, 16) : '',
+            overtime_hours: attendance.overtime_hours?.toString() || '',
+        });
+        setShowEditModal(true);
+    };
 
     const form = useForm({
         startDate: startDate || '',
@@ -233,12 +276,21 @@ export default function Attendance({ attendances, records, totalHours = 0, start
 
                 {/* Attendance Table */}
                 <Card className="bg-white shadow-lg border-0 rounded-xl overflow-hidden">
-                    <CardHeader className="flex items-center justify-between bg-[#f8f9fa] border-b border-gray-200 p-6">
-                        <div>
+                    <CardHeader className="flex justify-between bg-[#f8f9fa] border-b border-gray-200 p-6">
+                        {/* <div>
                             <CardTitle className="text-2xl font-bold text-gray-800">Atttendance table</CardTitle>
                             <p className="text-gray-600 mt-1">Detail {viewType === 'daily' ? 'daily' : 'Monthly'}</p>
+                        </div> */}
+                        <div>
+                            <h2 className="text-2xl font-bold text-gray-800">Attendance Table</h2>
                         </div>
-                    </CardHeader>
+                        <Button
+                            onClick={() => setShowAddModal(true)}
+                            className="w-full bg-blue-600 text-white hover:bg-blue-700"
+                        >
+                            Add Attendance
+                        </Button>
+                    </CardHeader>   
                     <CardContent>
                         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
                             <Table>
@@ -267,6 +319,9 @@ export default function Attendance({ attendances, records, totalHours = 0, start
                                         </TableCell>
                                         <TableCell className="py-4 px-6 text-sm font-bold text-gray-800">
                                             Status
+                                        </TableCell>
+                                        <TableCell className="py-4 px-6 text-sm font-bold text-gray-800">
+                                            Actions
                                         </TableCell>
                                     </TableRow>
                                 </TableHeader>
@@ -309,6 +364,24 @@ export default function Attendance({ attendances, records, totalHours = 0, start
                                                     {record.status === 'early_leave' && 'Early leave'}
                                                     {record.status === 'absent' && 'Absent'}
                                                 </span>
+                                            </TableCell>
+                                            <TableCell className="py-4 px-6">
+                                                <div className="flex items-center gap-2">
+                                                    <Button
+                                                        onClick={() => handleEdit(record)}
+                                                        size="sm"
+                                                        className="bg-yellow-600 text-white hover:bg-yellow-700"
+                                                    >
+                                                        Edit
+                                                    </Button>
+                                                    <Button
+                                                        onClick={() => handleDelete(record.id)}
+                                                        size="sm"
+                                                        className="bg-red-600 text-white hover:bg-red-700"
+                                                    >
+                                                        Delete
+                                                    </Button>
+                                                </div>
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -371,6 +444,186 @@ export default function Attendance({ attendances, records, totalHours = 0, start
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Add Attendance Modal */}
+            <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Add New Attendance</DialogTitle>
+                        <DialogDescription>
+                            Add a new attendance record for an employee
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <form onSubmit={(e) => {
+                        e.preventDefault();
+                        addForm.post(route('admin.attendances.store'), {
+                            onSuccess: () => {
+                                setShowAddModal(false);
+                                addForm.reset();
+                            },
+                        });
+                    }} className="space-y-4 mt-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Employee</label>
+                            <select
+                                value={addForm.data.employee_id}
+                                onChange={e => addForm.setData('employee_id', e.target.value)}
+                                className="w-full rounded-lg border-gray-300 text-sm"
+                            >
+                                <option value="">Select Employee</option>
+                                {employees.map(emp => (
+                                    <option key={emp.id} value={emp.id}>
+                                        {emp.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                            <input
+                                type="date"
+                                value={addForm.data.date}
+                                onChange={e => addForm.setData('date', e.target.value)}
+                                className="w-full rounded-lg border-gray-300 text-sm"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Check In Time</label>
+                            <input
+                                type="time"
+                                value={addForm.data.check_in}
+                                onChange={e => addForm.setData('check_in', e.target.value)}
+                                className="w-full rounded-lg border-gray-300 text-sm"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Check Out Time</label>
+                            <input
+                                type="time"
+                                value={addForm.data.check_out}
+                                onChange={e => addForm.setData('check_out', e.target.value)}
+                                className="w-full rounded-lg border-gray-300 text-sm"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Overtime Hours</label>
+                            <input
+                                type="number"
+                                step="0.1"
+                                min="0"
+                                value={addForm.data.overtime_hours}
+                                onChange={e => addForm.setData('overtime_hours', e.target.value)}
+                                className="w-full rounded-lg border-gray-300 text-sm"
+                            />
+                        </div>
+
+                        <div className="flex justify-end space-x-3 mt-6">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setShowAddModal(false)}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                className="bg-blue-600 text-white hover:bg-blue-700"
+                                disabled={addForm.processing}
+                            >
+                                Add Attendance
+                            </Button>
+                        </div>
+                    </form>
+                </DialogContent>
+            </Dialog>
+
+            {/* Edit Attendance Modal */}
+            <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Edit Attendance</DialogTitle>
+                        <DialogDescription>
+                            Edit attendance record for {selectedAttendance?.employee.name}
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <form onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!selectedAttendance) return;
+
+                        editForm.put(route('admin.attendances.update', selectedAttendance.id), {
+                            onSuccess: () => {
+                                setShowEditModal(false);
+                                editForm.reset();
+                                setSelectedAttendance(null);
+                            },
+                        });
+                    }} className="space-y-4 mt-4">
+                        <div>
+                            <label>Date</label>
+                             <input type="date" value={editForm.data.date} onChange={e => editForm.setData('date', e.target.value)} />
+                                     {editForm.errors.date && (
+                         <div className="text-sm text-red-600 mt-1">{editForm.errors.date}</div> )}
+                        </div>
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Check In Time</label>
+                            <input
+                                type="time"
+                                value={editForm.data.check_in}
+                                onChange={e => editForm.setData('check_in', e.target.value)}
+                                className="w-full rounded-lg border-gray-300 text-sm"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Check Out Time</label>
+                            <input
+                                type="time"
+                                value={editForm.data.check_out}
+                                onChange={e => editForm.setData('check_out', e.target.value)}
+                                className="w-full rounded-lg border-gray-300 text-sm"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Overtime Hours</label>
+                            <input
+                                type="number"
+                                step="0.1"
+                                min="0"
+                                value={editForm.data.overtime_hours}
+                                onChange={e => editForm.setData('overtime_hours', e.target.value)}
+                                className="w-full rounded-lg border-gray-300 text-sm"
+                            />
+                        </div>
+
+                        <div className="flex justify-end space-x-3 mt-6">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => {
+                                    setShowEditModal(false);
+                                    setSelectedAttendance(null);
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                className="bg-blue-600 text-white hover:bg-blue-700"
+                                disabled={editForm.processing}
+                            >
+                                Update Attendance
+                            </Button>
+                        </div>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </AdminLayout>
     );
 }

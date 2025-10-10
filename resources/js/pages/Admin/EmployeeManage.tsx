@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { RouteFunction } from "@/types/ziggy";
-
 declare const route: RouteFunction;
 import AdminLayout from "@/layouts/admin/AdminLayout";
 import PageMeta from "@/Components/common/PageMeta";
