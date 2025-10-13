@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { router } from '@inertiajs/core'
 import AdminLayout from '@/layouts/admin/AdminLayout'
 import AddDepartmentModal from './Modals/AddDepartmentModal'
+import PageBreadcrumb from '@/Components/common/PageBreadCrumb'
 
 interface Department {
   id: number
@@ -59,12 +60,12 @@ export default function DepartmentManage({ departments, filters }: Props) {
   return (
     <AdminLayout>
       <Head title="Department Management" />
-
+      <PageBreadcrumb pageTitle="Departments"></PageBreadcrumb>
       <div className="max-w-7xl mx-auto py-6 space-y-6">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg p-6 mb-6">
+        {/* <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg p-6 mb-6">
           <h1 className="text-3xl font-bold text-white mb-2">Department Management</h1>
           <p className="text-blue-100">Manage your organization's departments, employees, and managers</p>
-        </div>
+        </div> */}
         
         <Card className="border-0 shadow-xl bg-white dark:bg-gray-800">
           <CardHeader className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-6">

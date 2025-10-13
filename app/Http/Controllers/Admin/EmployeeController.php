@@ -39,7 +39,7 @@ class EmployeeController extends Controller
             $query->where('status', $filters['status']);
         }
 
-        $employees = $query->orderBy('name')->paginate(15)->withQueryString();
+        $employees = $query->orderBy('id')->paginate(10)->withQueryString();
 
         $departments = Department::orderBy('name')->get(['id', 'name']);
         $titles = Title::orderBy('name')->get(['id', 'name']);

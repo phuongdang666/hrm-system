@@ -99,24 +99,24 @@ class AnnouncementController extends Controller
         return redirect()->route('admin.announcements.index')->with('success', 'Announcement queued for delivery.');
     }
 
-    // public function status($id)
-    // {
-    //     $announcement = Announcement::withCount(['recipients as sent_count' => function ($q) {
-    //         $q->where('status', 'sent');
-    //     }, 'recipients as failed_count' => function ($q) {
-    //         $q->where('status', 'failed');
-    //     }, 'recipients as pending_count' => function ($q) {
-    //         $q->where('status', 'pending');
-    //     }])->withCount('recipients as total_recipients')->findOrFail($id);
+    public function status($id)
+    {
+        $announcement = Announcement::withCount(['recipients as sent_count' => function ($q) {
+            $q->where('status', 'sent');
+        }, 'recipients as failed_count' => function ($q) {
+            $q->where('status', 'failed');
+        }, 'recipients as pending_count' => function ($q) {
+            $q->where('status', 'pending');
+        }])->withCount('recipients as total_recipients')->findOrFail($id);
 
-    //     return response()->json([
-    //         'id' => $announcement->id,
-    //         'total' => $announcement->total_recipients,
-    //         'sent' => $announcement->sent_count,
-    //         'failed' => $announcement->failed_count,
-    //         'pending' => $announcement->pending_count,
-    //     ]);
-    // }
+        return response()->json([
+            'id' => $announcement->id,
+            'total' => $announcement->total_recipients,
+            'sent' => $announcement->sent_count,
+            'failed' => $announcement->failed_count,
+            'pending' => $announcement->pending_count,
+        ]);
+    }
 
     public function show($id)
     {

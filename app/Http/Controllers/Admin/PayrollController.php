@@ -27,7 +27,7 @@ class PayrollController extends Controller
 
         $payrolls = Payroll::with('employee')
             ->where('month', $month)
-            ->orderBy('created_at', 'desc')
+            ->orderBy('id')
             ->paginate(10)
             ->through(function ($payroll) {
                 return [

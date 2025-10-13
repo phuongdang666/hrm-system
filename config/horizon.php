@@ -209,5 +209,10 @@ return [
                 'maxProcesses' => 3,
             ],
         ],
+        '*' => [
+            'supervisor-1' => [
+                'maxProcesses' => 3,
+            ],
+        ],
     ],
 ];
