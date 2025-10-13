@@ -13,10 +13,32 @@ class LeaveRequestRepository implements LeaveRequestRepositoryInterface
         $start = Carbon::parse($month)->startOfMonth();
         $end   = Carbon::parse($month)->endOfMonth();
 
-        return LeaveRequest::whereBetween('start_date', [$start, $end])
-            ->where('type', 'unpaid')
+        // return LeaveRequest::whereBetween('start_date', [$start, $end])
+        //     ->where('type', 'unpaid')
+        //     ->where('status', 'approved')
+        //     ->selectRaw('employee_id, SUM(days) as unpaid_days')
+        //     ->groupBy('employee_id')
+        //     ->get()
+        //     ->keyBy('employee_id');
+        return LeaveReques::where('type', 'unpaid')
             ->where('status', 'approved')
-            ->selectRaw('employee_id, COUNT(*) as unpaid_days')
+            ->where(function($query) use ($startOfMonth, $endOfMonth){
+                //
+                $query->whereBetween('start_date', [$startOfMonth, $endOfMonth])
+                      ->orWhereBetween('end_date', [$startOfMonth, $endOfMonth])
+                      ->orWhere (function($query1) use($startOfMonth, $endOfMonth){
+                        $query1->where('start_date', '<', $startOfMonth )
+                                ->orWhere('end_date', '>', $endOfMonth);    
+                      });
+            })
+            ->select('employee_id')
+            ->selectRaw('
+                SUM(
+                    DATEDIFF(
+                        GREATEST(start_date,?)
+                        LEAST(end_date,?) +1
+                ) as unpaid_days
+            ',[$startOfMonth, $endOfMonth])
             ->groupBy('employee_id')
             ->get()
             ->keyBy('employee_id');

@@ -35,6 +35,8 @@ class NewLeaveRequestNotification extends Mailable implements ShouldQueue
             with: [
                 'leaveRequest' => $this->leaveRequest,
                 'url' => route('employee.leave-requests.manage'),
+                //   'url' => 'http://localhost:8000/employee/leave-requests'
+                
             ],
         );
     }

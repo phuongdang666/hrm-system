@@ -25,7 +25,8 @@ class EmployeeRequest extends FormRequest
                 'nullable',
                 'string',
                 'max:20',
-                'regex:/^([0-9\s\-\+\(\)]*)$/'
+                'regex:/^([0-9\s\-\+\(\)]*)$/',
+                'unique:employees,phone' . ($employeeId ? ",$employeeId" : ''),
             ],
             'address' => ['nullable', 'string', 'max:500'],
             'department_id' => ['nullable', 'exists:departments,id'],

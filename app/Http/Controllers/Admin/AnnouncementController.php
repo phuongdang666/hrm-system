@@ -5,22 +5,27 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Models\Announcement;
-use App\Models\AnnouncementRecipient;
-use App\Models\Employee;
 use App\Models\Department;
 use App\Models\Title;
+use App\Models\Employee;
+use App\Models\Announcement;
+use App\Models\AnnouncementRecipient;
 use App\Jobs\SendAnnouncementEmails;
 use App\Http\Requests\Admin\AnnouncementRequest;
+use App\Repositories\Contracts\AnnouncementRepositoryInterface;
 
 class AnnouncementController extends Controller
 {
+    protected $announcementRepository;
+
+    public function __construct(AnnouncementRepositoryInterface $announcementRepository)
+    {
+        $this->announcementRepository = $announcementRepository;
+    }
+
     public function index()
     {
-        $announcements = Announcement::withCount(['recipients as read_count' => function ($q) {
-            $q->whereNotNull('read_at');
-        }, 'recipients as total_recipients'])->orderBy('created_at', 'desc')->get();
-
+        $announcements = $this->announcementRepository->getWithRecipients();
         $departments = Department::select('id', 'name')->orderBy('name')->get();
         $titles = Title::select('id', 'name')->orderBy('name')->get();
         $employees = Employee::select('id', 'name', 'email')->orderBy('name')->get();
@@ -52,7 +57,7 @@ class AnnouncementController extends Controller
             'body' => $validated['body'],
             // sender mapping: admin guard isn't tied to Employee model in this app by default
             'sender_id' => null,
-        ]);
+    ]);
 
         $recipientEmployees = collect($validated['employees'] ?? []);
 
