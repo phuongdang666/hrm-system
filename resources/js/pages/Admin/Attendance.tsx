@@ -60,8 +60,8 @@ interface AttendanceProps {
 }
 
 export default function Attendance({ attendances, records, totalHours = 0, startDate, endDate, employees = [], departments = [], filters = {} }: AttendanceProps) {
-    const [viewType, setViewType] = useState<'daily' | 'monthly'>('daily');
-    const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
+    // const [viewType, setViewType] = useState<'daily' | 'monthly'>('daily');
+    // const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedAttendance, setSelectedAttendance] = useState<AttendanceRecord | null>(null);
@@ -106,7 +106,8 @@ export default function Attendance({ attendances, records, totalHours = 0, start
             overtime_hours: attendance.overtime_hours?.toString() || '',
         });
         setShowEditModal(true);
-    }; const form = useForm({
+    };
+    const form = useForm({
         startDate: startDate || '',
         endDate: endDate || '',
         employeeId: filters.employeeId || '',
@@ -139,7 +140,6 @@ export default function Attendance({ attendances, records, totalHours = 0, start
         return date.getUTCHours().toString().padStart(2, '0') + ':' +
             date.getUTCMinutes().toString().padStart(2, '0');
     };
-
 
     return (
         <AdminLayout>

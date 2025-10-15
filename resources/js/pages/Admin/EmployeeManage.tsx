@@ -11,6 +11,7 @@ import { Table, TableHeader, TableRow, TableCell, TableBody } from "@/Components
 import Modal from "../../Components/Modal";
 import EmployeeForm from "../../Components/Forms/EmployeeForm";
 
+
 interface Employee {
     id: number;
     code: string;
@@ -46,10 +47,25 @@ export default function EmployeeManage({ employees, filters = {}, departments = 
     });
 
     useEffect(() => {
-        // Use Ziggy's route() that Blade injected; fall back to window.route to satisfy TS
-        const url = (window as any).route ? (window as any).route("admin.employees.index") : "/admin/employees";
-        form.get(url, { preserveState: true, replace: true });
-    }, [form.data.code, form.data.name, form.data.department, form.data.title, form.data.status]);
+        const handler = setTimeout(() => {
+            const url = (window as any).route ?
+                (window as any).route("admin.employees.index") :
+                "/admin/employees";
+
+            form.get(url, {
+                preserveState: true,
+                replace: true
+            });
+        }, 1000); // Delay 1s
+
+        return () => clearTimeout(handler);
+    }, [
+        form.data.code,
+        form.data.name,
+        form.data.department,
+        form.data.title,
+        form.data.status
+    ]);
 
     // cast to any to avoid deep TS instantiation issues when accessing form.data
     const formData: any = form.data || {};

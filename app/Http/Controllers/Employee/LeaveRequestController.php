@@ -25,7 +25,7 @@ class LeaveRequestController extends Controller
             $leaveRequests = LeaveRequest::whereHas('employee', function ($query) use ($employee) {
                 $query->where('department_id', $employee->department_id)
                     ->where('role', 'staff')
-                    ->orderByDesc('id');
+                    ->orderBy('status', 'asc');  
             })->with('employee')->get();
         } else {
             // Get own leave requests

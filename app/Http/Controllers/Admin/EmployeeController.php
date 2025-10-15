@@ -41,8 +41,8 @@ class EmployeeController extends Controller
 
         $employees = $query->orderBy('id')->paginate(10)->withQueryString();
 
-        $departments = Department::orderBy('name')->get(['id', 'name']);
-        $titles = Title::orderBy('name')->get(['id', 'name']);
+        $departments = Department::orderBy('name')->get(['id', 'name','manager_id']);
+        $titles = Title::orderBy('name')->get(['id', 'name']);  
 
         return Inertia::render('Admin/EmployeeManage', [
             'employees' => $employees,
